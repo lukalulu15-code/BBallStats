@@ -1,0 +1,752 @@
+<div class="uzivo-wrapper">
+
+
+  <div class="igraci-wrapper">
+
+
+
+    <div class="forma-wrapper">
+      <!-- lista dodatih igrača -->
+
+      <div class="tajmer-kontejner">
+        <div class="tajmer-cetvrtina">{{cetvrtina <= 4 ? 'Q' + cetvrtina : 'OT' + (cetvrtina-4)}}</div>
+            <div class="vremena-red">
+              <div class="tajmer-vreme" [class.tajmer-radi]="tajmerRadi()">{{ tajmerVreme() }}</div>
+              <!--
+                <div align="center"
+                *ngIf="tajmerVremeSekunde()>24 || (tajmerVremeSekunde()<=24 && shotVreme()<tajmerVremeSekunde())"
+                class="shot-clock" [class.shot-radi]="tajmerRadi()" [class.shot-isticanje]="shotVreme() <= 5">
+                {{ shotVreme() }}
+              </div>
+              -->
+              
+            </div>
+            <div class="rezultat-bar">
+              <div class="tim-score" *ngIf="utakmica!=null">
+                <div class="tim-naziv" *ngIf="utakmica.domacin == trener.klub">{{trener.klub}}</div>
+                <div class="tim-naziv" *ngIf="utakmica.domacin != trener.klub">{{protivnik}}</div>
+                <div class="tim-poeni">{{ poeniDomacin }}</div>
+              </div>
+              <div>
+                <div class="score-sep">–</div>
+                <div class="q-info">{{cetvrtina <= 4 ? 'Q' + cetvrtina : 'OT' + (cetvrtina-4)}}</div>
+                </div>
+                <div class="tim-score" *ngIf="utakmica!=null">
+                  <div class="tim-naziv" *ngIf="utakmica.domacin == trener.klub">{{protivnik}}</div>
+                  <div class="tim-naziv" *ngIf="utakmica.domacin != trener.klub">{{trener.klub}}</div>
+                  <div class="tim-poeni">{{poeniGost}}</div>
+                </div>
+              </div>
+            </div>
+            <div class="teren-wrap">
+              <svg class="teren-svg" viewBox="0 0 640 360" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <pattern id="drvo" width="18" height="18" patternUnits="userSpaceOnUse">
+                    <rect width="18" height="18" fill="#c8932a" />
+                    <rect x="0" y="0" width="9" height="18" fill="#bf8a22" opacity=".5" />
+                    <line x1="0" y1="0" x2="0" y2="18" stroke="#a8720e" stroke-width=".5" opacity=".6" />
+                    <line x1="9" y1="0" x2="9" y2="18" stroke="#a8720e" stroke-width=".5" opacity=".6" />
+                  </pattern>
+                  <pattern id="drvo2" width="18" height="18" patternUnits="userSpaceOnUse"
+                    patternTransform="rotate(90)">
+                    <rect width="18" height="18" fill="#be8820" />
+                    <rect x="0" y="0" width="9" height="18" fill="#b58018" opacity=".5" />
+                    <line x1="0" y1="0" x2="0" y2="18" stroke="#9a6c0c" stroke-width=".5" opacity=".6" />
+                    <line x1="9" y1="0" x2="9" y2="18" stroke="#9a6c0c" stroke-width=".5" opacity=".6" />
+                  </pattern>
+                  <clipPath id="teren-clip">
+                    <rect x="0" y="0" width="640" height="360" rx="8" />
+                  </clipPath>
+                </defs>
+
+                <g clip-path="url(#teren-clip)">
+                  <rect width="640" height="360" fill="url(#drvo)" />
+                  <rect x="0" y="0" width="320" height="360" fill="url(#drvo2)" opacity=".4" />
+                  <rect x="320" y="0" width="320" height="360" fill="url(#drvo)" opacity=".4" />
+                  <rect x="18" y="18" width="604" height="324" fill="none" stroke="#7a5010" stroke-width="2.5" rx="2" />
+                  <line x1="320" y1="18" x2="320" y2="342" stroke="#7a5010" stroke-width="2" />
+                  <circle cx="320" cy="180" r="58" fill="none" stroke="#7a5010" stroke-width="2" />
+                  <circle cx="320" cy="180" r="5" fill="#7a5010" />
+                  <rect x="18" y="98" width="128" height="164" fill="#b07820" opacity=".35" stroke="#7a5010"
+                    stroke-width="2" />
+                  <rect x="494" y="98" width="128" height="164" fill="#b07820" opacity=".35" stroke="#7a5010"
+                    stroke-width="2" />
+                  <rect x="18" y="130" width="62" height="100" fill="none" stroke="#7a5010" stroke-width="1.5" />
+                  <rect x="560" y="130" width="62" height="100" fill="none" stroke="#7a5010" stroke-width="1.5" />
+                  <path d="M146 98 A82 82 0 0 1 146 262" fill="none" stroke="#7a5010" stroke-width="2" />
+                  <path d="M494 98 A82 82 0 0 0 494 262" fill="none" stroke="#7a5010" stroke-width="2" />
+                  <circle cx="80" cy="180" r="4" fill="#7a5010" />
+                  <circle cx="560" cy="180" r="4" fill="#7a5010" />
+                </g>
+
+                <!-- igrači na terenu -->
+                <!-- naši igrači — leva strana, klikabilni -->
+                <g *ngFor="let igrac of terenIgraci; let i = index" style="cursor:pointer"
+                  (click)="odaberiIgraca(igrac)">
+                  <circle *ngIf="utakmica!=null && utakmica.domacin==trener.klub" [attr.cx]="pozicijeNasi[i].x"
+                    [attr.cy]="pozicijeNasi[i].y" r="30"
+                    [attr.fill]="odabraniIgrac?.korisnickoIme === igrac.korisnickoIme ? '#d4af37' : '#ffffff'"
+                    [attr.stroke]="odabraniIgrac?.korisnickoIme === igrac.korisnickoIme ? '#ffffff' : '#1a1a2e'"
+                    stroke-width="2.5">
+                  </circle>
+                  <circle *ngIf="utakmica!=null && utakmica.domacin!=trener.klub" [attr.cx]="pozicijeProtivnik[i].x"
+                    [attr.cy]="pozicijeProtivnik[i].y" r="30"
+                    [attr.fill]="odabraniIgrac?.korisnickoIme === igrac.korisnickoIme ? '#ff4a4a' : '#1a1a2e'"
+                    [attr.stroke]="odabraniIgrac?.korisnickoIme === igrac.korisnickoIme ? '#ffffff' : '#ffffff'"
+                    stroke-width="2.5">
+                  </circle>
+                  <text *ngIf="utakmica!=null && utakmica.domacin==trener.klub" [attr.x]="pozicijeNasi[i].x"
+                    [attr.y]="pozicijeNasi[i].y - 5" text-anchor="middle" dominant-baseline="middle" font-size="14"
+                    font-weight="500"
+                    [attr.fill]="odabraniIgrac?.korisnickoIme === igrac.korisnickoIme ? '#ffffff' : '#000000'">
+                    {{ igrac.broj }}
+                  </text>
+                  <text *ngIf="utakmica!=null && utakmica.domacin!=trener.klub" [attr.x]="pozicijeProtivnik[i].x"
+                    [attr.y]="pozicijeProtivnik[i].y - 5" text-anchor="middle" dominant-baseline="middle" font-size="14"
+                    font-weight="500"
+                    [attr.fill]="odabraniIgrac?.korisnickoIme === igrac.korisnickoIme ? '#ffffff' : '#ffffff'">
+                    {{ igrac.broj }}
+                  </text>
+                  <text *ngIf="utakmica!=null && utakmica.domacin==trener.klub" [attr.x]="pozicijeNasi[i].x"
+                    [attr.y]="pozicijeNasi[i].y + 10" text-anchor="middle" dominant-baseline="middle" font-size="9"
+                    [attr.fill]="odabraniIgrac?.korisnickoIme === igrac.korisnickoIme ? '#ffffff' : '#000000'">
+                    {{ igrac.prezime.split(' ')[0] }}
+                  </text>
+                  <text *ngIf="utakmica!=null && utakmica.domacin!=trener.klub" [attr.x]="pozicijeProtivnik[i].x"
+                    [attr.y]="pozicijeProtivnik[i].y + 10" text-anchor="middle" dominant-baseline="middle" font-size="9"
+                    [attr.fill]="odabraniIgrac?.korisnickoIme === igrac.korisnickoIme ? '#ffffff' : '#ffffff'">
+                    {{ igrac.prezime.split(' ')[0] }}
+                  </text>
+                </g>
+
+                <g *ngFor="let igrac of terenProtivnickiIgraci; let i = index" style="cursor:pointer"
+                  (click)="odaberiProtivnickog(igrac)">
+                  <circle *ngIf="utakmica!=null && utakmica.domacin==trener.klub" [attr.cx]="pozicijeProtivnik[i].x"
+                    [attr.cy]="pozicijeProtivnik[i].y" r="30"
+                    [attr.fill]="odabraniIgrac?.id === igrac.id ? '#ff4a4a' : '#1a1a2e'"
+                    [attr.stroke]="odabraniIgrac?.id === igrac.id ? '#ffffff' : '#ffffff'" stroke-width="2.5">
+                  </circle>
+                  <circle *ngIf="utakmica!=null && utakmica.domacin!=trener.klub" [attr.cx]="pozicijeNasi[i].x"
+                    [attr.cy]="pozicijeNasi[i].y" r="30"
+                    [attr.fill]="odabraniIgrac?.id === igrac.id ? '#d4af37' : '#ffffff'"
+                    [attr.stroke]="odabraniIgrac?.id === igrac.id ? '#ffffff' : '#1a1a2e'" stroke-width="2.5">
+                  </circle>
+
+                  <text *ngIf="utakmica!=null && utakmica.domacin==trener.klub" [attr.x]="pozicijeProtivnik[i].x"
+                    [attr.y]="pozicijeProtivnik[i].y - 5" text-anchor="middle" dominant-baseline="middle" font-size="14"
+                    font-weight="500" [attr.fill]="odabraniIgrac?.id === igrac.id ? '#ffffff' : '#ffffff'">
+                    {{ igrac.broj }}
+                  </text>
+                  <text *ngIf="utakmica!=null && utakmica.domacin!=trener.klub" [attr.x]="pozicijeNasi[i].x"
+                    [attr.y]="pozicijeNasi[i].y - 5" text-anchor="middle" dominant-baseline="middle" font-size="14"
+                    font-weight="500" [attr.fill]="odabraniIgrac?.id === igrac.id ? '#ffffff' : '#000000'">
+                    {{ igrac.broj }}
+                  </text>
+
+
+                  <text *ngIf="utakmica!=null && utakmica.domacin==trener.klub" [attr.x]="pozicijeProtivnik[i].x"
+                    [attr.y]="pozicijeProtivnik[i].y + 10" text-anchor="middle" dominant-baseline="middle" font-size="9"
+                    [attr.fill]="odabraniIgrac?.id === igrac.id ? '#ffffff' : '#ffffff'">
+                    {{ igrac.prezime.split(' ')[0] }}
+                  </text>
+                  <text *ngIf="utakmica!=null && utakmica.domacin!=trener.klub" [attr.x]="pozicijeNasi[i].x"
+                    [attr.y]="pozicijeNasi[i].y + 10" text-anchor="middle" dominant-baseline="middle" font-size="9"
+                    [attr.fill]="odabraniIgrac?.id === igrac.id ? '#ffffff' : '#000000'">
+                    {{ igrac.prezime.split(' ')[0] }}
+                  </text>
+                </g>
+
+                <!-- protivnički igrači — desna strana,
+        <g *ngFor="let igrac of protivnickiIgraci; let i = index">
+        <circle [attr.cx]="pozicijeProtivnik[i].x" [attr.cy]="pozicijeProtivnik[i].y" r="24" fill="#7a1a1a"
+          stroke="#e74c3c" stroke-width="2.5">
+        </circle>
+        <text [attr.x]="pozicijeProtivnik[i].x" [attr.y]="pozicijeProtivnik[i].y - 5" text-anchor="middle"
+          dominant-baseline="middle" font-size="14" font-weight="500" fill="#ffffff">
+          {{ igrac.broj }}
+        </text>
+        <text [attr.x]="pozicijeProtivnik[i].x" [attr.y]="pozicijeProtivnik[i].y + 10" text-anchor="middle"
+          dominant-baseline="middle" font-size="9" fill="rgba(255,255,255,0.8)">
+          {{ igrac.ime.split(' ')[0] }}
+        </text>
+      </g>
+      
+      samo prikaz -->
+
+              </svg>
+            </div>
+
+            <!-- panel za događaje -->
+            <div class="tajmer-kontejner">
+              <div class="tajmer-kontrole">
+                <button class="tajmer-btn" (click)="tajmerPokreni()" *ngIf="!tajmerRadi()">▶</button>
+                <button class="tajmer-btn" (click)="tajmerPauziraj()" *ngIf="tajmerRadi()">⏸</button>
+                <button class="tajmer-btn reset" (click)="tajmerReset()">↺</button>
+                <button class="tajmer-btn" (click)="tajmerPrethodnaCetvrtina()">⏮</button>
+                <button class="tajmer-btn" (click)="tajmerSledecaCetvrtina()">⏭</button>
+                <!--
+                <button class="tajmer-btn shot-reset" (click)="shotReset(24)">24</button>
+                <button class="tajmer-btn shot-reset" (click)="shotReset(14)">14</button>
+                <button class="tajmer-btn" (click)="shotPokreni()">shot▶</button>
+                <button class="tajmer-btn" (click)="shotPauziraj()">shot⏸</button>
+                -->
+                <button class="tajmer-btn" (click)="prikaziUnosVremena = !prikaziUnosVremena">✎</button>
+                <button class="tajmer-btn-zavrsi" (click)="zavrsi()"
+                  *ngIf="tajmerVremeSekunde()==0 && cetvrtina>=4">Zavrsi</button>
+                <button class="btn-nazad" (click)="otvoriPotvrdu()">Napusti</button>
+              </div>
+              <div class="tajmer-unos" *ngIf="prikaziUnosVremena">
+                game clock
+                <input type="number" [(ngModel)]="unosMinuti" min="0" max="15" placeholder="min" class="unos-polje">
+                <span>:</span>
+                <input type="number" [(ngModel)]="unosSekunde" min="0" max="59" placeholder="sec" class="unos-polje">
+               <!--
+                  shot clock
+                <input type="number" [(ngModel)]="unosShotClock" min="0" max="24" placeholder="sec" class="unos-polje">
+                --> 
+                <button class="tajmer-btn potvrdi" (click)="postaviVreme()">OK</button>
+              </div>
+            </div>
+
+            <div class="odabran-panel" *ngIf="odabraniIgrac">
+              <div class="odabran-header">
+                <span>#{{ odabraniIgrac.broj }} {{ odabraniIgrac.ime }} {{odabraniIgrac.prezime}} -
+                  {{odabraniIgrac.klub}}</span>
+                <button class="btn-x" (click)="odabraniIgrac = null">✕</button>
+              </div>
+              <div class="dog-grid" *ngIf="odabranNas()">
+                <button class="btn-dog" (click)="dvaPoenaPogodak(odabraniIgrac.korisnickoIme)">✅ 2 poena
+                  pogodak</button>
+                <button class="btn-dog" (click)="dvaPoenaPromasaj(odabraniIgrac.korisnickoIme)">❌ 2 poena
+                  promašaj</button>
+                <button class="btn-dog" (click)="triPoenaPogodak(odabraniIgrac.korisnickoIme)">✅ 3 poena
+                  pogodak</button>
+                <button class="btn-dog" (click)="triPoenaPromasaj(odabraniIgrac.korisnickoIme)">❌ 3 poena
+                  promašaj</button>
+                <button class="btn-dog" (click)="slobodnoBacanjePogodak(odabraniIgrac.korisnickoIme)">✅ Slobodno
+                  pogodak</button>
+                <button class="btn-dog" (click)="slobodnoBacanjePromasaj(odabraniIgrac.korisnickoIme)">❌ Slobodno
+                  promašaj</button>
+                <button class="btn-dog" (click)="skokNapad(odabraniIgrac.korisnickoIme)"> Skok napad</button>
+                <button class="btn-dog" (click)="skokOdbrana(odabraniIgrac.korisnickoIme)"> Skok odbrana</button>
+                <button class="btn-dog" (click)="asistencija(odabraniIgrac.korisnickoIme)"> Asistencija</button>
+                <button class="btn-dog" (click)="ukradena(odabraniIgrac.korisnickoIme)"> Ukradena</button>
+                <button class="btn-dog" (click)="izgubljena(odabraniIgrac.korisnickoIme)"> Izgubljena</button>
+                <button class="btn-dog" (click)="blokadaFor(odabraniIgrac.korisnickoIme)">Blokada Za</button>
+                <button class="btn-dog" (click)="blokadaAgainst(odabraniIgrac.korisnickoIme)">Blokada Nad</button>
+                <button class="btn-dog" (click)="faulCom(odabraniIgrac.korisnickoIme)">Faul</button>
+                <button class="btn-dog" (click)="faulDrawn(odabraniIgrac.korisnickoIme)">Faul iznudjen</button>
+              </div>
+              <div class="dog-grid" *ngIf="!odabranNas()">
+                <button class="btn-dog" (click)="dvaPoenaPogodak(odabraniIgrac.id)">✅ 2 poena pogodak</button>
+                <button class="btn-dog" (click)="dvaPoenaPromasaj(odabraniIgrac.id)">❌ 2 poena promašaj</button>
+                <button class="btn-dog" (click)="triPoenaPogodak(odabraniIgrac.id)">✅ 3 poena pogodak</button>
+                <button class="btn-dog" (click)="triPoenaPromasaj(odabraniIgrac.id)">❌ 3 poena promašaj</button>
+                <button class="btn-dog" (click)="slobodnoBacanjePogodak(odabraniIgrac.id)">✅ Slobodno
+                  pogodak</button>
+                <button class="btn-dog" (click)="slobodnoBacanjePromasaj(odabraniIgrac.id)">❌ Slobodno
+                  promašaj</button>
+                <button class="btn-dog" (click)="skokNapad(odabraniIgrac.id)"> Skok napad</button>
+                <button class="btn-dog" (click)="skokOdbrana(odabraniIgrac.id)"> Skok odbrana</button>
+                <button class="btn-dog" (click)="asistencija(odabraniIgrac.id)"> Asistencija</button>
+                <button class="btn-dog" (click)="ukradena(odabraniIgrac.id)"> Ukradena</button>
+                <button class="btn-dog" (click)="izgubljena(odabraniIgrac.id)"> Izgubljena</button>
+                <button class="btn-dog" (click)="blokadaFor(odabraniIgrac.id)">Blokada Za</button>
+                <button class="btn-dog" (click)="blokadaAgainst(odabraniIgrac.id)">Blokada Nad</button>
+                <button class="btn-dog" (click)="faulCom(odabraniIgrac.id)">Faul</button>
+                <button class="btn-dog" (click)="faulDrawn(odabraniIgrac.id)">Faul iznudjen</button>
+              </div>
+            </div>
+
+            <!-- klupa / 
+     
+    <div class="zona-grid">
+      <div class="zona" (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)"
+        (drop)="onDrop($event, 'klupa')" [class.dragover]="dragoverZona === 'klupa'">
+        <div class="zona-label">🪑 Klupa</div>
+        <div class="chips">
+          <div class="chip" *ngFor="let ig of klupaIgraci" draggable="true" (dragstart)="onDragStart(ig)"
+            (dragend)="dragIgrac = null">
+            <span class="chip-num">#{{ ig.broj }}</span> {{ ig.ime }}
+          </div>
+        </div>
+      </div>
+      <div class="zona" (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)"
+        (drop)="onDrop($event, 'teren')" [class.dragover]="dragoverZona === 'teren'">
+        <div class="zona-label">✅ Na terenu</div>
+        <div class="chips">
+          <div class="chip aktivan" *ngFor="let ig of terenIgraci" draggable="true" (dragstart)="onDragStart(ig)"
+            (dragend)="dragIgrac = null" (click)="odaberiIgraca(ig)">
+            <span class="chip-num">#{{ ig.broj }}</span> {{ ig.ime }}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="zavrsi-wrap">
+      <button class="btn-zavrsi">Završi utakmicu</button>
+    </div>
+    
+    
+    teren chipovi -->
+
+            <div class="klupe-wrapper">
+              <!-- domaci tim -->
+              <div class="klupa-box" (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)"
+                (drop)="onDrop($event, 'klupa')" [class.dragover]="dragoverZona === 'klupa'">
+                <div class="zona-label" *ngIf="utakmica!=null">{{utakmica.domacin}}</div>
+                <div class="chips" *ngIf="utakmica!=null && utakmica.domacin == trener.klub">
+                  <div class="chip aktivan" *ngFor="let ig of terenIgraci" draggable="true"
+                    (dragstart)="onDragStart(ig)" (dragend)="dragIgrac = null" (click)="odaberiIgraca(ig)"
+                    (dragover)="onDragOver($event)" (drop)="onDropNaIgraca($event, ig)">
+                    #{{ ig.broj }} {{ig.ime[0]}}.{{ ig.prezime }}
+                  </div>
+
+                  <div class="chip" *ngFor="let ig of klupaIgraci" draggable="true" (dragstart)="onDragStart(ig)"
+                    (dragend)="dragIgrac = null" (dragover)="onDragOver($event)" (drop)="onDropNaIgraca($event, ig)">
+                    #{{ ig.broj }} {{ig.ime[0]}}.{{ ig.prezime }}
+                  </div>
+                </div>
+                <div class="chips" *ngIf="utakmica!=null && utakmica.domacin != trener.klub">
+                  <div class="chip aktivan" *ngFor="let ig of terenProtivnickiIgraci" draggable="true"
+                    (dragstart)="onDragStartProtivnicki(ig)" (dragend)="dragProtivnickiIgrac = null"
+                    (click)="odaberiProtivnickog(ig)" (dragover)="onDragOverProtivnicki($event)"
+                    (drop)="onDropNaProtivnickogIgraca($event, ig)">
+                    #{{ ig.broj }} {{ig.ime[0]}}.{{ ig.prezime }}
+                  </div>
+                  <div class="chip" *ngFor="let ig of klupaProtivnickiIgraci" draggable="true"
+                    (dragstart)="onDragStartProtivnicki(ig)" (dragend)="dragProtivnickiIgrac = null"
+                    (dragover)="onDragOverProtivnicki($event)" (drop)="onDropNaProtivnickogIgraca($event, ig)">
+                    #{{ ig.broj }} {{ig.ime[0]}}.{{ ig.prezime }}
+                  </div>
+                </div>
+              </div>
+              <!-- gostujuci tim -->
+              <div class="klupa-box" (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)"
+                (drop)="onDrop($event, 'klupa')">
+                <div class="zona-label" *ngIf="utakmica!=null">{{utakmica.gost}}</div>
+                <div class="chips" *ngIf="utakmica!=null && utakmica.domacin != trener.klub">
+                  <div class="chip aktivan" *ngFor="let ig of terenIgraci" draggable="true"
+                    (dragstart)="onDragStart(ig)" (dragend)="dragIgrac = null" (click)="odaberiIgraca(ig)"
+                    (dragover)="onDragOver($event)" (drop)="onDropNaIgraca($event, ig)">
+                    #{{ ig.broj }} {{ig.ime[0]}}.{{ ig.prezime }}
+                  </div>
+                  <div class="chip" *ngFor="let ig of klupaIgraci" draggable="true" (dragstart)="onDragStart(ig)"
+                    (dragend)="dragIgrac = null" (dragover)="onDragOver($event)" (drop)="onDropNaIgraca($event, ig)">
+                    #{{ ig.broj }} {{ig.ime[0]}}.{{ ig.prezime }}
+                  </div>
+                </div>
+                <div class="chips" *ngIf="utakmica!=null && utakmica.domacin == trener.klub">
+                  <div class="chip aktivan" *ngFor="let ig of terenProtivnickiIgraci" draggable="true"
+                    (dragstart)="onDragStartProtivnicki(ig)" (dragend)="dragProtivnickiIgrac = null"
+                    (click)="odaberiProtivnickog(ig)" (dragover)="onDragOverProtivnicki($event)"
+                    (drop)="onDropNaProtivnickogIgraca($event, ig)">
+                    #{{ ig.broj }} {{ig.ime[0]}}.{{ ig.prezime }}
+                  </div>
+                  <div class="chip" *ngFor="let ig of klupaProtivnickiIgraci" draggable="true"
+                    (dragstart)="onDragStartProtivnicki(ig)" (dragend)="dragProtivnickiIgrac = null"
+                    (dragover)="onDragOverProtivnicki($event)" (drop)="onDropNaProtivnickogIgraca($event, ig)">
+                    #{{ ig.broj }} {{ig.ime[0]}}.{{ ig.prezime }}
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+
+            <div class="tab-bar" align="center">
+              <button class="tab" [class.aktivan]="aktivanTab === 'boxScore'" (click)="postaviTab('boxScore')">
+                Box score
+              </button>
+              <button class="tab" [class.aktivan]="aktivanTab === 'pbp'" (click)="postaviTab('pbp')">
+                Play by Play
+              </button>
+            </div>
+            <div *ngIf="aktivanTab === 'pbp'">
+              <!-- play by play -->
+              <div class="tim-tabovi">
+                <button class="tab-btn" [class.aktivan]="pbpCetvrtina==1" (click)="izaberiCetvrtinuPbp(1)">
+                  1Q
+                </button>
+                <button class="tab-btn" [class.aktivan]="pbpCetvrtina==2" (click)="izaberiCetvrtinuPbp(2)">
+                  2Q
+                </button>
+                <button class="tab-btn" [class.aktivan]="pbpCetvrtina==3" (click)="izaberiCetvrtinuPbp(3)">
+                  3Q
+                </button>
+                <button class="tab-btn" [class.aktivan]="pbpCetvrtina==4" (click)="izaberiCetvrtinuPbp(4)">
+                  4Q
+                </button>
+                <button class="tab-btn" [class.aktivan]="pbpCetvrtina==5" (click)="izaberiCetvrtinuPbp(5)">
+                  OT
+                </button>
+              </div>
+              <div class="pbp-box">
+                <div class="pbp-label">Play by play</div>
+                <div class="pbp-scroll" *ngIf="pbpCetvrtina==1">
+                  <div class="pbp-empty" *ngIf="dogadjajiPrvaCetvrtina.length === 0">Još nema događaja</div>
+                  <div class="pbp-row" *ngFor="let d of dogadjajiPrvaCetvrtina">
+                    <span class="pbp-t">Q{{ d.cetvrtina }} {{ d.vreme }}'</span>
+                    <span class="pbp-n">#{{d.brojIgraca}} {{d.prezimeIgraca}}, {{ d.imeIgraca }}, {{d.klub}}</span>
+                    <span class="pbp-d">{{ d.opis }}
+                      <span *ngIf="d.opis=='2FG Made'" class="pbp-n">&nbsp;{{d.igrac.poeni}}PTS, 2FG
+                        {{d.igrac.dvaPoenaPogodak}}/{{d.igrac.dvaPoenaPogodak+d.igrac.dvaPoenaPromasaj}},
+                        {{d.poeniDomacin}}-{{d.poeniGost}}</span>
+                      <span *ngIf="d.opis=='2FG Miss'" class="pbp-n">&nbsp;2FG
+                        {{d.igrac.dvaPoenaPogodak}}/{{d.igrac.dvaPoenaPogodak+d.igrac.dvaPoenaPromasaj}}
+                      </span>
+                      <span *ngIf="d.opis=='3FG Made'" class="pbp-n">&nbsp;{{d.igrac.poeni}}PTS, 3FG
+                        {{d.igrac.triPoenaPogodak}}/{{d.igrac.triPoenaPogodak+d.igrac.triPoenaPromasaj}},
+                        {{d.poeniDomacin}}-{{d.poeniGost}}</span>
+                      <span *ngIf="d.opis=='3FG Miss'" class="pbp-n">&nbsp;3FG
+                        {{d.igrac.triPoenaPogodak}}/{{d.igrac.triPoenaPogodak+d.igrac.triPoenaPromasaj}}</span>
+                      <span *ngIf="d.opis=='FT Made'" class="pbp-n">&nbsp;{{d.igrac.poeni}}PTS, FT
+                        {{d.igrac.slobodnoPogodak}}/{{d.igrac.slobodnoPogodak+d.igrac.slobodnoPromasaj}},
+                        {{d.poeniDomacin}}-{{d.poeniGost}}</span>
+                      <span *ngIf="d.opis=='FT Miss'" class="pbp-n">&nbsp;FT
+                        {{d.igrac.slobodnoPogodak}}/{{d.igrac.slobodnoPogodak+d.igrac.slobodnoPromasaj}}</span>
+                      <span *ngIf="d.opis=='Off Rebound'" class="pbp-n">&nbsp;{{d.igrac.skokoviUkupno}}REB
+                        ({{d.igrac.skokoviNapad}}off, {{d.igrac.skokoviOdbrana}}def)</span>
+                      <span *ngIf="d.opis=='Def Reb'" class="pbp-n">&nbsp;{{d.igrac.skokoviUkupno}}REB
+                        ({{d.igrac.skokoviNapad}}off, {{d.igrac.skokoviOdbrana}}def)</span>
+                      <span *ngIf="d.opis=='Assist'" class="pbp-n">&nbsp;{{d.igrac.asistencije}}AST</span>
+                      <span *ngIf="d.opis=='Steal'" class="pbp-n">&nbsp;{{d.igrac.ukradene}}STL</span>
+                      <span *ngIf="d.opis=='Block'" class="pbp-n">&nbsp;{{d.igrac.blokade}}BLK</span>
+                      <span *ngIf="d.opis=='Shot Rejected'" class="pbp-n">&nbsp;{{d.igrac.blokadePrimljene}} Shot
+                        rejected</span>
+                      <span *ngIf="d.opis=='Turnover'" class="pbp-n">&nbsp;{{d.igrac.izgubljene}}TO</span>
+                      <span *ngIf="d.opis=='Foul'" class="pbp-n">&nbsp;{{d.igrac.licneGreske}} Fouls</span>
+                      <span *ngIf="d.opis=='Foul drawn'" class="pbp-n">&nbsp;{{d.igrac.iznudjeniFaulovi}} Drawn
+                        fouls</span>
+                    </span>
+                    <button class="pbp-delete" (click)="obrisiDogadjaj(d)" title="Obriši događaj">✕</button>
+                  </div>
+                </div>
+                <div class="pbp-scroll" *ngIf="pbpCetvrtina==2">
+                  <div class="pbp-empty" *ngIf="dogadjajiDrugaCetvrtina.length === 0">Još nema događaja</div>
+                  <div class="pbp-row" *ngFor="let d of dogadjajiDrugaCetvrtina">
+                    <span class="pbp-t">Q{{ d.cetvrtina }} {{ d.vreme }}'</span>
+                    <span class="pbp-n">#{{d.brojIgraca}} {{d.prezimeIgraca}}, {{ d.imeIgraca }}, {{d.klub}}</span>
+                    <span class="pbp-d">{{ d.opis }}
+                      <span *ngIf="d.opis=='2FG Made'" class="pbp-n">&nbsp;{{d.igrac.poeni}}PTS, 2FG
+                        {{d.igrac.dvaPoenaPogodak}}/{{d.igrac.dvaPoenaPogodak+d.igrac.dvaPoenaPromasaj}}</span>
+                      <span *ngIf="d.opis=='2FG Miss'" class="pbp-n">&nbsp;2FG
+                        {{d.igrac.dvaPoenaPogodak}}/{{d.igrac.dvaPoenaPogodak+d.igrac.dvaPoenaPromasaj}}
+                      </span>
+                      <span *ngIf="d.opis=='3FG Made'" class="pbp-n">&nbsp;{{d.igrac.poeni}}PTS, 3FG
+                        {{d.igrac.triPoenaPogodak}}/{{d.igrac.triPoenaPogodak+d.igrac.triPoenaPromasaj}}</span>
+                      <span *ngIf="d.opis=='3FG Miss'" class="pbp-n">&nbsp;3FG
+                        {{d.igrac.triPoenaPogodak}}/{{d.igrac.triPoenaPogodak+d.igrac.triPoenaPromasaj}}</span>
+                      <span *ngIf="d.opis=='FT Made'" class="pbp-n">&nbsp;{{d.igrac.poeni}}PTS, FT
+                        {{d.igrac.slobodnoPogodak}}/{{d.igrac.slobodnoPogodak+d.igrac.slobodnoPromasaj}}</span>
+                      <span *ngIf="d.opis=='FT Miss'" class="pbp-n">&nbsp;FT
+                        {{d.igrac.slobodnoPogodak}}/{{d.igrac.slobodnoPogodak+d.igrac.slobodnoPromasaj}}</span>
+                      <span *ngIf="d.opis=='Off Rebound'" class="pbp-n">&nbsp;{{d.igrac.skokoviUkupno}}REB
+                        ({{d.igrac.skokoviNapad}}off, {{d.igrac.skokoviOdbrana}}def)</span>
+                      <span *ngIf="d.opis=='Def Reb'" class="pbp-n">&nbsp;{{d.igrac.skokoviUkupno}}REB
+                        ({{d.igrac.skokoviNapad}}off, {{d.igrac.skokoviOdbrana}}def)</span>
+                      <span *ngIf="d.opis=='Assist'" class="pbp-n">&nbsp;{{d.igrac.asistencije}}AST</span>
+                      <span *ngIf="d.opis=='Steal'" class="pbp-n">&nbsp;{{d.igrac.ukradene}}STL</span>
+                      <span *ngIf="d.opis=='Block'" class="pbp-n">&nbsp;{{d.igrac.blokade}}BLK</span>
+                      <span *ngIf="d.opis=='Shot Rejected'" class="pbp-n">&nbsp;{{d.igrac.blokadePrimljene}} Shot
+                        rejected</span>
+                      <span *ngIf="d.opis=='Turnover'" class="pbp-n">&nbsp;{{d.igrac.izgubljene}}TO</span>
+                      <span *ngIf="d.opis=='Foul'" class="pbp-n">&nbsp;{{d.igrac.licneGreske}} Fouls</span>
+                      <span *ngIf="d.opis=='Foul drawn'" class="pbp-n">&nbsp;{{d.igrac.iznudjeniFaulovi}} Drawn
+                        fouls</span>
+                    </span>
+                    <button class="pbp-delete" (click)="obrisiDogadjaj(d)" title="Obriši događaj">✕</button>
+                  </div>
+                </div>
+                <div class="pbp-scroll" *ngIf="pbpCetvrtina==3">
+                  <div class="pbp-empty" *ngIf="dogadjajiTrecaCetvrtina.length === 0">Još nema događaja</div>
+                  <div class="pbp-row" *ngFor="let d of dogadjajiTrecaCetvrtina">
+                    <span class="pbp-t">Q{{ d.cetvrtina }} {{ d.vreme }}'</span>
+                    <span class="pbp-n">#{{d.brojIgraca}} {{d.prezimeIgraca}}, {{ d.imeIgraca }}, {{d.klub}}</span>
+                    <span class="pbp-d">{{ d.opis }}
+                      <span *ngIf="d.opis=='2FG Made'" class="pbp-n">&nbsp;{{d.igrac.poeni}}PTS, 2FG
+                        {{d.igrac.dvaPoenaPogodak}}/{{d.igrac.dvaPoenaPogodak+d.igrac.dvaPoenaPromasaj}}</span>
+                      <span *ngIf="d.opis=='2FG Miss'" class="pbp-n">&nbsp;2FG
+                        {{d.igrac.dvaPoenaPogodak}}/{{d.igrac.dvaPoenaPogodak+d.igrac.dvaPoenaPromasaj}}
+                      </span>
+                      <span *ngIf="d.opis=='3FG Made'" class="pbp-n">&nbsp;{{d.igrac.poeni}}PTS, 3FG
+                        {{d.igrac.triPoenaPogodak}}/{{d.igrac.triPoenaPogodak+d.igrac.triPoenaPromasaj}}</span>
+                      <span *ngIf="d.opis=='3FG Miss'" class="pbp-n">&nbsp;3FG
+                        {{d.igrac.triPoenaPogodak}}/{{d.igrac.triPoenaPogodak+d.igrac.triPoenaPromasaj}}</span>
+                      <span *ngIf="d.opis=='FT Made'" class="pbp-n">&nbsp;{{d.igrac.poeni}}PTS, FT
+                        {{d.igrac.slobodnoPogodak}}/{{d.igrac.slobodnoPogodak+d.igrac.slobodnoPromasaj}}</span>
+                      <span *ngIf="d.opis=='FT Miss'" class="pbp-n">&nbsp;FT
+                        {{d.igrac.slobodnoPogodak}}/{{d.igrac.slobodnoPogodak+d.igrac.slobodnoPromasaj}}</span>
+                      <span *ngIf="d.opis=='Off Rebound'" class="pbp-n">&nbsp;{{d.igrac.skokoviUkupno}}REB
+                        ({{d.igrac.skokoviNapad}}off, {{d.igrac.skokoviOdbrana}}def)</span>
+                      <span *ngIf="d.opis=='Def Reb'" class="pbp-n">&nbsp;{{d.igrac.skokoviUkupno}}REB
+                        ({{d.igrac.skokoviNapad}}off, {{d.igrac.skokoviOdbrana}}def)</span>
+                      <span *ngIf="d.opis=='Assist'" class="pbp-n">&nbsp;{{d.igrac.asistencije}}AST</span>
+                      <span *ngIf="d.opis=='Steal'" class="pbp-n">&nbsp;{{d.igrac.ukradene}}STL</span>
+                      <span *ngIf="d.opis=='Block'" class="pbp-n">&nbsp;{{d.igrac.blokade}}BLK</span>
+                      <span *ngIf="d.opis=='Shot Rejected'" class="pbp-n">&nbsp;{{d.igrac.blokadePrimljene}} Shot
+                        rejected</span>
+                      <span *ngIf="d.opis=='Turnover'" class="pbp-n">&nbsp;{{d.igrac.izgubljene}}TO</span>
+                      <span *ngIf="d.opis=='Foul'" class="pbp-n">&nbsp;{{d.igrac.licneGreske}} Fouls</span>
+                      <span *ngIf="d.opis=='Foul drawn'" class="pbp-n">&nbsp;{{d.igrac.iznudjeniFaulovi}} Drawn
+                        fouls</span>
+                    </span>
+                    <button class="pbp-delete" (click)="obrisiDogadjaj(d)" title="Obriši događaj">✕</button>
+                  </div>
+                </div>
+                <div class="pbp-scroll" *ngIf="pbpCetvrtina==4">
+                  <div class="pbp-empty" *ngIf="dogadjajiCetvrtaCetvrtina.length === 0">Još nema događaja</div>
+                  <div class="pbp-row" *ngFor="let d of dogadjajiCetvrtaCetvrtina">
+                    <span class="pbp-t">Q{{ d.cetvrtina }} {{ d.vreme }}'</span>
+                    <span class="pbp-n">#{{d.brojIgraca}} {{d.prezimeIgraca}}, {{ d.imeIgraca }}, {{d.klub}}</span>
+                    <span class="pbp-d">{{ d.opis }}
+                      <span *ngIf="d.opis=='2FG Made'" class="pbp-n">&nbsp;{{d.igrac.poeni}}PTS, 2FG
+                        {{d.igrac.dvaPoenaPogodak}}/{{d.igrac.dvaPoenaPogodak+d.igrac.dvaPoenaPromasaj}}</span>
+                      <span *ngIf="d.opis=='2FG Miss'" class="pbp-n">&nbsp;2FG
+                        {{d.igrac.dvaPoenaPogodak}}/{{d.igrac.dvaPoenaPogodak+d.igrac.dvaPoenaPromasaj}}
+                      </span>
+                      <span *ngIf="d.opis=='3FG Made'" class="pbp-n">&nbsp;{{d.igrac.poeni}}PTS, 3FG
+                        {{d.igrac.triPoenaPogodak}}/{{d.igrac.triPoenaPogodak+d.igrac.triPoenaPromasaj}}</span>
+                      <span *ngIf="d.opis=='3FG Miss'" class="pbp-n">&nbsp;3FG
+                        {{d.igrac.triPoenaPogodak}}/{{d.igrac.triPoenaPogodak+d.igrac.triPoenaPromasaj}}</span>
+                      <span *ngIf="d.opis=='FT Made'" class="pbp-n">&nbsp;{{d.igrac.poeni}}PTS, FT
+                        {{d.igrac.slobodnoPogodak}}/{{d.igrac.slobodnoPogodak+d.igrac.slobodnoPromasaj}}</span>
+                      <span *ngIf="d.opis=='FT Miss'" class="pbp-n">&nbsp;FT
+                        {{d.igrac.slobodnoPogodak}}/{{d.igrac.slobodnoPogodak+d.igrac.slobodnoPromasaj}}</span>
+                      <span *ngIf="d.opis=='Off Rebound'" class="pbp-n">&nbsp;{{d.igrac.skokoviUkupno}}REB
+                        ({{d.igrac.skokoviNapad}}off, {{d.igrac.skokoviOdbrana}}def)</span>
+                      <span *ngIf="d.opis=='Def Reb'" class="pbp-n">&nbsp;{{d.igrac.skokoviUkupno}}REB
+                        ({{d.igrac.skokoviNapad}}off, {{d.igrac.skokoviOdbrana}}def)</span>
+                      <span *ngIf="d.opis=='Assist'" class="pbp-n">&nbsp;{{d.igrac.asistencije}}AST</span>
+                      <span *ngIf="d.opis=='Steal'" class="pbp-n">&nbsp;{{d.igrac.ukradene}}STL</span>
+                      <span *ngIf="d.opis=='Block'" class="pbp-n">&nbsp;{{d.igrac.blokade}}BLK</span>
+                      <span *ngIf="d.opis=='Shot Rejected'" class="pbp-n">&nbsp;{{d.igrac.blokadePrimljene}} Shot
+                        rejected</span>
+                      <span *ngIf="d.opis=='Turnover'" class="pbp-n">&nbsp;{{d.igrac.izgubljene}}TO</span>
+                      <span *ngIf="d.opis=='Foul'" class="pbp-n">&nbsp;{{d.igrac.licneGreske}} Fouls</span>
+                      <span *ngIf="d.opis=='Foul drawn'" class="pbp-n">&nbsp;{{d.igrac.iznudjeniFaulovi}} Drawn
+                        fouls</span>
+                    </span>
+                    <button class="pbp-delete" (click)="obrisiDogadjaj(d)" title="Obriši događaj">✕</button>
+                  </div>
+                </div>
+                <div class="pbp-scroll" *ngIf="pbpCetvrtina==5">
+                  <div class="pbp-empty" *ngIf="dogadjajiProduzetak.length === 0">Još nema događaja</div>
+                  <div class="pbp-row" *ngFor="let d of dogadjajiProduzetak">
+                    <span class="pbp-t">{{d.cetvrtina <= 4 ? 'Q' + d.cetvrtina : 'OT' + (d.cetvrtina-4)}} {{ d.vreme
+                        }}'</span>
+                        <span class="pbp-n">#{{d.brojIgraca}} {{d.prezimeIgraca}}, {{ d.imeIgraca }}, {{d.klub}}</span>
+                        <span class="pbp-d">{{ d.opis }}
+                          <span *ngIf="d.opis=='2FG Made'" class="pbp-n">&nbsp;{{d.igrac.poeni}}PTS, 2FG
+                            {{d.igrac.dvaPoenaPogodak}}/{{d.igrac.dvaPoenaPogodak+d.igrac.dvaPoenaPromasaj}}</span>
+                          <span *ngIf="d.opis=='2FG Miss'" class="pbp-n">&nbsp;2FG
+                            {{d.igrac.dvaPoenaPogodak}}/{{d.igrac.dvaPoenaPogodak+d.igrac.dvaPoenaPromasaj}}
+                          </span>
+                          <span *ngIf="d.opis=='3FG Made'" class="pbp-n">&nbsp;{{d.igrac.poeni}}PTS, 3FG
+                            {{d.igrac.triPoenaPogodak}}/{{d.igrac.triPoenaPogodak+d.igrac.triPoenaPromasaj}}</span>
+                          <span *ngIf="d.opis=='3FG Miss'" class="pbp-n">&nbsp;3FG
+                            {{d.igrac.triPoenaPogodak}}/{{d.igrac.triPoenaPogodak+d.igrac.triPoenaPromasaj}}</span>
+                          <span *ngIf="d.opis=='FT Made'" class="pbp-n">&nbsp;{{d.igrac.poeni}}PTS, FT
+                            {{d.igrac.slobodnoPogodak}}/{{d.igrac.slobodnoPogodak+d.igrac.slobodnoPromasaj}}</span>
+                          <span *ngIf="d.opis=='FT Miss'" class="pbp-n">&nbsp;FT
+                            {{d.igrac.slobodnoPogodak}}/{{d.igrac.slobodnoPogodak+d.igrac.slobodnoPromasaj}}</span>
+                          <span *ngIf="d.opis=='Off Rebound'" class="pbp-n">&nbsp;{{d.igrac.skokoviUkupno}}REB
+                            ({{d.igrac.skokoviNapad}}off, {{d.igrac.skokoviOdbrana}}def)</span>
+                          <span *ngIf="d.opis=='Def Reb'" class="pbp-n">&nbsp;{{d.igrac.skokoviUkupno}}REB
+                            ({{d.igrac.skokoviNapad}}off, {{d.igrac.skokoviOdbrana}}def)</span>
+                          <span *ngIf="d.opis=='Assist'" class="pbp-n">&nbsp;{{d.igrac.asistencije}}AST</span>
+                          <span *ngIf="d.opis=='Steal'" class="pbp-n">&nbsp;{{d.igrac.ukradene}}STL</span>
+                          <span *ngIf="d.opis=='Block'" class="pbp-n">&nbsp;{{d.igrac.blokade}}BLK</span>
+                          <span *ngIf="d.opis=='Shot Rejected'" class="pbp-n">&nbsp;{{d.igrac.blokadePrimljene}} Shot
+                            rejected</span>
+                          <span *ngIf="d.opis=='Turnover'" class="pbp-n">&nbsp;{{d.igrac.izgubljene}}TO</span>
+                          <span *ngIf="d.opis=='Foul'" class="pbp-n">&nbsp;{{d.igrac.licneGreske}} Fouls</span>
+                          <span *ngIf="d.opis=='Foul drawn'" class="pbp-n">&nbsp;{{d.igrac.iznudjeniFaulovi}} Drawn
+                            fouls</span>
+                        </span>
+                        <button class="pbp-delete" (click)="obrisiDogadjaj(d)" title="Obriši događaj">✕</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+        </div>
+
+      </div>
+      <div *ngIf="aktivanTab === 'boxScore'">
+        <div class="igraci-wrapper-boxscore" *ngIf="utakmica!=null">
+          <!-- TABELA -->
+          <div class="tabela-wrapper">
+            <div class="tim-tabovi">
+              <button class="tab-btn" [class.aktivan]="prikaziEkipu === utakmica.domacin"
+                (click)="izberiBox(utakmica.domacin)">
+                {{utakmica.domacin}}
+              </button>
+              <button class="tab-btn" [class.aktivan]="prikaziEkipu === utakmica.gost"
+                (click)="izberiBox(utakmica.gost)">
+                {{utakmica.gost}}
+              </button>
+            </div>
+            <table class="tabela">
+              <thead>
+                <tr>
+                  <th rowspan="2" class="th-boxscore" style="text-align:left;">Igrač</th>
+                  <th rowspan="2" class="th-boxscore">MIN</th>
+                  <th rowspan="2" class="th-boxscore">PTS</th>
+                  <th colspan="2" class="th-grupa" style="text-align: center;">2FG</th>
+                  <th colspan="2" class="th-grupa" style="text-align: center;">3FG</th>
+                  <th colspan="2" class="th-grupa" style="text-align: center;">FT</th>
+                  <th colspan="3" class="th-grupa" style="text-align: center;">Rebounds</th>
+                  <th rowspan="2" class="th-boxscore">AST</th>
+                  <th rowspan="2" class="th-boxscore">STL</th>
+                  <th rowspan="2" class="th-boxscore">TO</th>
+                  <th colspan="2" class="th-grupa" style="text-align: center;">BLK</th>
+                  <th colspan="2" class="th-grupa" style="text-align: center;">FOULS</th>
+                  <th rowspan="2" class="th-boxscore">PIR</th>
+                  <th rowspan="2" class="th-boxscore">+/-</th>
+                </tr>
+                <tr>
+                  <th class="sub-col-first">M/A</th>
+                  <th class="sub-col-last">%</th>
+                  <th class="sub-col-first">M/A</th>
+                  <th class="sub-col-last">%</th>
+                  <th class="sub-col-first">M/A</th>
+                  <th class="sub-col-last">%</th>
+                  <th class="sub-col-first">O</th>
+                  <th>D</th>
+                  <th class="sub-col-last">T</th>
+                  <th class="sub-col-first">F</th>
+                  <th class="sub-col-last">A</th>
+                  <th class="sub-col-first">C</th>
+                  <th class="sub-col-last">D</th>
+                </tr>
+              </thead>
+              <tbody *ngIf="utakmica!=null && utakmica.domacin===prikaziEkipu">
+                <tr *ngFor="let igrac of domaciIgraciStats">
+                  <td [style.font-weight]="igrac.teren ? 'bold' : 'normal'">{{igrac.broj}}
+                    {{igrac.ime[0]}}.{{igrac.prezime}} <span *ngIf="igrac.starter==true">*</span> </td>
+                  <td align="center">{{igrac.minuti}}</td>
+                  <td align="center">{{igrac.poeni}}</td>
+                  <td align="center">{{igrac.dvaPoenaPogodak}}/{{igrac.dvaPoenaPogodak+igrac.dvaPoenaPromasaj}}</td>
+                  <td align="center">{{igrac.dvaPoenaProcenat.toFixed(1)}}%</td>
+                  <td align="center">{{igrac.triPoenaPogodak}}/{{igrac.triPoenaPogodak+igrac.triPoenaPromasaj}}</td>
+                  <td align="center">{{igrac.triPoenaProcenat.toFixed(1)}}%</td>
+                  <td align="center">{{igrac.slobodnoPogodak}}/{{igrac.slobodnoPogodak+igrac.slobodnoPromasaj}}</td>
+                  <td align="center">{{igrac.slobodnoProcenat.toFixed(1)}}%</td>
+                  <td align="center">{{igrac.skokoviNapad}}</td>
+                  <td align="center">{{igrac.skokoviOdbrana}}</td>
+                  <td align="center">{{igrac.skokoviUkupno}}</td>
+                  <td align="center">{{igrac.asistencije}}</td>
+                  <td align="center">{{igrac.ukradene}}</td>
+                  <td align="center">{{igrac.izgubljene}}</td>
+                  <td align="center">{{igrac.blokade}}</td>
+                  <td align="center">{{igrac.blokadePrimljene}}</td>
+                  <td align="center">{{igrac.licneGreske}}</td>
+                  <td align="center">{{igrac.iznudjeniFaulovi}}</td>
+                  <td align="center">{{igrac.indeks}}</td>
+                  <td align="center">{{igrac.plusMinus}}</td>
+                </tr>
+                <tr>
+                  <td>Total</td>
+                  <td align="center">{{formatMinute(minutiUkupnoDomaci)}}</td>
+                  <td align="center">{{poeniUkupnoDomaci}}</td>
+                  <td align="center">
+                    {{dvaPoenaPogodakUkupnoDomaci}}/{{dvaPoenaPogodakUkupnoDomaci+dvaPoenaPromasajUkupnoDomaci}}</td>
+                  <td align="center">{{dvaPoenaProcenatUkupnoDomaci.toFixed(1)}}%</td>
+                  <td align="center">
+                    {{triPoenaPogodakUkupnoDomaci}}/{{triPoenaPogodakUkupnoDomaci+triPoenaPromasajUkupnoDomaci}}</td>
+                  <td align="center">{{triPoenaProcenatUkupnoDomaci.toFixed(1)}}%</td>
+                  <td align="center">
+                    {{slobodnoPogodakUkupnoDomaci}}/{{slobodnoPogodakUkupnoDomaci+slobodnoPromasajUkupnoDomaci}}</td>
+                  <td align="center">{{slobodnoProcenatUkupnoDomaci.toFixed(1)}}%</td>
+                  <td align="center">{{skokoviNapadUkupnoDomaci}}</td>
+                  <td align="center">{{skokoviOdbranaUkupnoDomaci}}</td>
+                  <td align="center">{{skokoviUkupnoUkupnoDomaci}}</td>
+                  <td align="center">{{asistencijeUkupnoDomaci}}</td>
+                  <td align="center">{{ukradeneUkupnoDomaci}}</td>
+                  <td align="center">{{izgubljeneUkupnoDomaci}}</td>
+                  <td align="center">{{blokadeUkupnoDomaci}}</td>
+                  <td align="center">{{blokadePrimljeneUkupnoDomaci}}</td>
+                  <td align="center">{{licneGreskeUkupnoDomaci}}</td>
+                  <td align="center">{{iznudjeniFauloviUkupnoDomaci}}</td>
+                  <td align="center">{{indeksUkupnoDomaci}}</td>
+                  <td align="center">{{plusMinusUkupnoDomaci}}</td>
+                </tr>
+                <tr *ngIf="nasiIgraci.length === 0">
+                  <td colspan="5" class="td-prazno">Nema igrača</td>
+                </tr>
+              </tbody>
+              <tbody *ngIf="utakmica!=null && utakmica.gost===prikaziEkipu">
+                <tr *ngFor="let igrac of gostujuciIgraciStats">
+                  <td [style.font-weight]="igrac.teren ? 'bold' : 'normal'">{{igrac.broj}}
+                    {{igrac.ime[0]}}.{{igrac.prezime}} <span *ngIf="igrac.starter==true">*</span></td>
+                  <td align="center">{{igrac.minuti}}</td>
+                  <td align="center">{{igrac.poeni}}</td>
+                  <td align="center">{{igrac.dvaPoenaPogodak}}/{{igrac.dvaPoenaPogodak+igrac.dvaPoenaPromasaj}}</td>
+                  <td align="center">{{igrac.dvaPoenaProcenat.toFixed(1)}}%</td>
+                  <td align="center">{{igrac.triPoenaPogodak}}/{{igrac.triPoenaPogodak+igrac.triPoenaPromasaj}}</td>
+                  <td align="center">{{igrac.triPoenaProcenat.toFixed(1)}}%</td>
+                  <td align="center">{{igrac.slobodnoPogodak}}/{{igrac.slobodnoPogodak+igrac.slobodnoPromasaj}}</td>
+                  <td align="center">{{igrac.slobodnoProcenat.toFixed(1)}}%</td>
+                  <td align="center">{{igrac.skokoviNapad}}</td>
+                  <td align="center">{{igrac.skokoviOdbrana}}</td>
+                  <td align="center">{{igrac.skokoviUkupno}}</td>
+                  <td align="center">{{igrac.asistencije}}</td>
+                  <td align="center">{{igrac.ukradene}}</td>
+                  <td align="center">{{igrac.izgubljene}}</td>
+                  <td align="center">{{igrac.blokade}}</td>
+                  <td align="center">{{igrac.blokadePrimljene}}</td>
+                  <td align="center">{{igrac.licneGreske}}</td>
+                  <td align="center">{{igrac.iznudjeniFaulovi}}</td>
+                  <td align="center">{{igrac.indeks}}</td>
+                  <td align="center">{{igrac.plusMinus}}</td>
+                </tr>
+                <tr>
+                  <td>Total</td>
+                  <td align="center">{{formatMinute(minutiUkupnoGosti)}}</td>
+                  <td align="center">{{poeniUkupnoGosti}}</td>
+                  <td align="center">
+                    {{dvaPoenaPogodakUkupnoGosti}}/{{dvaPoenaPogodakUkupnoGosti+dvaPoenaPromasajUkupnoGosti}}</td>
+                  <td align="center">{{dvaPoenaProcenatUkupnoGosti.toFixed(1)}}%</td>
+                  <td align="center">
+                    {{triPoenaPogodakUkupnoGosti}}/{{triPoenaPogodakUkupnoGosti+triPoenaPromasajUkupnoGosti}}</td>
+                  <td align="center">{{triPoenaProcenatUkupnoGosti.toFixed(1)}}%</td>
+                  <td align="center">
+                    {{slobodnoPogodakUkupnoGosti}}/{{slobodnoPogodakUkupnoGosti+slobodnoPromasajUkupnoGosti}}</td>
+                  <td align="center">{{slobodnoProcenatUkupnoGosti.toFixed(1)}}%</td>
+                  <td align="center">{{skokoviNapadUkupnoGosti}}</td>
+                  <td align="center">{{skokoviOdbranaUkupnoGosti}}</td>
+                  <td align="center">{{skokoviUkupnoUkupnoGosti}}</td>
+                  <td align="center">{{asistencijeUkupnoGosti}}</td>
+                  <td align="center">{{ukradeneUkupnoGosti}}</td>
+                  <td align="center">{{izgubljeneUkupnoGosti}}</td>
+                  <td align="center">{{blokadeUkupnoGosti}}</td>
+                  <td align="center">{{blokadePrimljeneUkupnoGosti}}</td>
+                  <td align="center">{{licneGreskeUkupnoGosti}}</td>
+                  <td align="center">{{iznudjeniFauloviUkupnoGosti}}</td>
+                  <td align="center">{{indeksUkupnoGosti}}</td>
+                  <td align="center">{{plusMinusUkupnoGosti}}</td>
+                </tr>
+                <tr *ngIf="nasiIgraci.length === 0">
+                  <td colspan="5" class="td-prazno">Nema igrača</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-overlay" *ngIf="prikaziPotvrdu" (click)="zatvoriPotvrdu()">
+        <div class="modal-box" (click)="$event.stopPropagation()">
+          <div class="modal-naslov">Napustiti utakmicu?</div>
+          <div class="modal-tekst">
+            Da li ste sigurni da želite da napustite utakmicu? Utakmica će ostati u toku i možete joj se vratiti
+            kasnije.
+          </div>
+          <div class="modal-akcije">
+            <button class="modal-btn otkazi" (click)="zatvoriPotvrdu()">Otkaži</button>
+            <button class="modal-btn potvrdi" (click)="potvrdiIzlaz()">Napusti</button>
+          </div>
+        </div>
+      </div>
+
+      <router-outlet></router-outlet>

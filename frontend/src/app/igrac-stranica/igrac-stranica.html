@@ -1,0 +1,595 @@
+<body>
+  <!-- Navigacioni meni -->
+  <header>
+    <img src="bbballstats_logo.png" alt="logo" class="logo-img" />
+    <div align="right">
+      <a (click)="logOut()" class="linkButton">Odjavi se</a>
+    </div>
+  </header>
+
+  <div class="app-wrapper">
+
+    <main class="app-content">
+      <div class="profil-wrapper" *ngIf="igrac">
+
+        <!-- zaglavlje -->
+        <div class="profil-header">
+          <img [src]="igrac.slika" class="profil-slika" *ngIf="igrac.slika" />
+          <div class="profil-info">
+            <div class="profil-ime">{{ igrac.ime }} {{ igrac.prezime }} <span class="profil-broj">#{{ igrac.broj
+                }}</span></div>
+            <div class="profil-pozicija">{{ igrac.pozicija }} · {{ igrac.klub }}</div>
+            <div class="profil-meta">
+              <span>{{ igrac.datumRodjenja }}</span>
+              <span>{{ igrac.visina }} cm</span>
+              <span>{{ izabranaSezona==-1 ? brojOdigranihUtakmica : brojOdigranihUtakmicaSezona }} utakmica</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="sezona-izbor">
+          <label>Sezona:</label>
+          <select [(ngModel)]="izabranaSezona" (change)="promeniIzbor()" class="sezona-select">
+            <option *ngFor="let s of sezone" [ngValue]="s">
+              {{ s }}/{{ s + 1 }}
+            </option>
+            <option [ngValue]="-1">
+              Ukupno
+            </option>
+          </select>
+          <label>Tip:</label>
+          <select [(ngModel)]="izabraniTip" (change)="promeniIzbor()" class="sezona-select">
+            <option [ngValue]="'sve'">Sve</option>
+            <option [ngValue]="'liga'">Liga</option>
+            <option [ngValue]="'prijateljska'">Prijateljska</option>
+          </select>
+        </div>
+
+        <!-- proseci ukupno -->
+        <div class="proseci-grid" *ngIf="izabranaSezona==-1">
+          <div class="prosek-kartica">
+            <div class="prosek-label">Poeni</div>
+            <div class="prosek-vrednost istaknuto">{{ prosekPoena.toFixed(1) }}</div>
+          </div>
+          <div class="prosek-kartica">
+            <div class="prosek-label">Skokovi</div>
+            <div class="prosek-vrednost">{{ prosekSkokova.toFixed(1) }}</div>
+          </div>
+          <div class="prosek-kartica">
+            <div class="prosek-label">Asist.</div>
+            <div class="prosek-vrednost">{{ prosekAsistencija.toFixed(1) }}</div>
+          </div>
+          <div class="prosek-kartica">
+            <div class="prosek-label">PIR</div>
+            <div class="prosek-vrednost">{{ prosekIndeksa.toFixed(1) }}</div>
+          </div>
+          <div class="prosek-kartica">
+            <div class="prosek-label">Min</div>
+            <div class="prosek-vrednost">{{ formatMinute(prosekMinutaSek) }}</div>
+          </div>
+        </div>
+
+        <!-- proseci sezona -->
+        <div class="proseci-grid" *ngIf="izabranaSezona>-1">
+          <div class="prosek-kartica">
+            <div class="prosek-label">Poeni</div>
+            <div class="prosek-vrednost istaknuto">{{ prosekPoenaSezona.toFixed(1) }}</div>
+          </div>
+          <div class="prosek-kartica">
+            <div class="prosek-label">Skokovi</div>
+            <div class="prosek-vrednost">{{ prosekSkokovaSezona.toFixed(1) }}</div>
+          </div>
+          <div class="prosek-kartica">
+            <div class="prosek-label">Asist.</div>
+            <div class="prosek-vrednost">{{ prosekAsistencijaSezona.toFixed(1) }}</div>
+          </div>
+          <div class="prosek-kartica">
+            <div class="prosek-label">PIR</div>
+            <div class="prosek-vrednost">{{ prosekIndeksaSezona.toFixed(1) }}</div>
+          </div>
+          <div class="prosek-kartica">
+            <div class="prosek-label">Min</div>
+            <div class="prosek-vrednost">{{ formatMinute(prosekMinutaSekSezona) }}</div>
+          </div>
+        </div>
+
+        <!-- TAB BAR -->
+        <div class="tab-bar" align="center">
+          <button class="tab" [class.aktivan]="aktivanTab === 'statistika'" (click)="postaviTab('statistika')">
+            Statistika
+          </button>&nbsp;
+          <button class="tab" [class.aktivan]="aktivanTab === 'podaci'" (click)="postaviTab('podaci')">
+            Ažuriraj podatke
+          </button>&nbsp;
+          <button class="tab" [class.aktivan]="aktivanTab === 'izvestaj'" (click)="postaviTab('izvestaj')">
+            Izveštaji
+          </button>
+          <button class="tab" [class.aktivan]="aktivanTab === 'shootingChart'" (click)="postaviTab('shootingChart')">
+            Shooting chart
+          </button>
+        </div>
+        <div *ngIf="aktivanTab === 'statistika'">
+          <div class="sekcija-naslov">Proseci</div>
+          <table class="prosek-tabela" *ngIf="izabranaSezona==-1">
+            <thead>
+              <tr>
+                <th>Utakmice</th>
+                <th>Starter</th>
+                <th>MIN</th>
+                <th>PTS</th>
+                <th>2FG</th>
+                <th>3FG</th>
+                <th>FT</th>
+                <th>OFF REB</th>
+                <th>DEF REB</th>
+                <th>REB</th>
+                <th>AST</th>
+                <th>STL</th>
+                <th>TOV</th>
+                <th>BLK</th>
+                <th>FOULS</th>
+                <th>PIR</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{{ brojOdigranihUtakmica }}</td>
+                <td>{{ startovaoUtakmica}}</td>
+                <td>{{ formatMinute(prosekMinutaSek) }}</td>
+                <td>{{ prosekPoena.toFixed(1) }}</td>
+                <td>{{prosekDvaPoena.toFixed(1)}}%</td>
+                <td>{{prosekTriPoena.toFixed(1)}}%</td>
+                <td>{{ prosekSlobodno.toFixed(1)}}%</td>
+                <td>{{prosekSkokoviNapad.toFixed(1)}}</td>
+                <td>{{prosekSkokoviOdbrana.toFixed(1)}}</td>
+                <td>{{prosekSkokova.toFixed(1)}}</td>
+                <td>{{prosekAsistencija.toFixed(1)}}</td>
+                <td>{{ prosekUkradene.toFixed(1)}}</td>
+                <td>{{prosekIzgubljene.toFixed(1)}}</td>
+                <td>{{prosekBlokade.toFixed(1)}}</td>
+                <td>{{prosekLicneGreske.toFixed(1)}}</td>
+                <td>{{prosekIndeksa.toFixed(1)}}</td>
+              </tr>
+            </tbody>
+          </table>
+          <table class="prosek-tabela" *ngIf="izabranaSezona>-1">
+            <thead>
+              <tr>
+                <th>Utakmice</th>
+                <th>Starter</th>
+                <th>MIN</th>
+                <th>PTS</th>
+                <th>2FG</th>
+                <th>3FG</th>
+                <th>FT</th>
+                <th>OFF REB</th>
+                <th>DEF REB</th>
+                <th>REB</th>
+                <th>AST</th>
+                <th>STL</th>
+                <th>TOV</th>
+                <th>BLK</th>
+                <th>FOULS</th>
+                <th>PIR</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{{ brojOdigranihUtakmicaSezona }}</td>
+                <td>{{ startovaoUtakmicaSezona}}</td>
+                <td>{{ formatMinute(prosekMinutaSekSezona) }}</td>
+                <td>{{ prosekPoenaSezona.toFixed(1) }}</td>
+                <td>{{prosekDvaPoenaSezona.toFixed(1)}}%</td>
+                <td>{{prosekTriPoenaSezona.toFixed(1)}}%</td>
+                <td>{{ prosekSlobodnoSezona.toFixed(1)}}%</td>
+                <td>{{prosekSkokoviNapadSezona.toFixed(1)}}</td>
+                <td>{{prosekSkokoviOdbranaSezona.toFixed(1)}}</td>
+                <td>{{prosekSkokovaSezona.toFixed(1)}}</td>
+                <td>{{prosekAsistencijaSezona.toFixed(1)}}</td>
+                <td>{{ prosekUkradeneSezona.toFixed(1)}}</td>
+                <td>{{prosekIzgubljeneSezona.toFixed(1)}}</td>
+                <td>{{prosekBlokadeSezona.toFixed(1)}}</td>
+                <td>{{prosekLicneGreskeSezona.toFixed(1)}}</td>
+                <td>{{prosekIndeksaSezona.toFixed(1)}}</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- tabela utakmica -->
+          <div class="sekcija-naslov">Odigrane utakmice</div>
+          <div class="hint">Klikni na zaglavlje kolone za sortiranje</div>
+          <table class="utakmice-tabela" *ngIf="izabranaSezona==-1">
+            <thead>
+              <tr>
+                <th (click)="sortiraj('datum')" class="sortabilno">
+                  Datum {{ sortKolona === 'datum' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+                </th>
+                <th (click)="sortiraj('protivnik')" class="sortabilno">
+                  Protivnik {{ sortKolona === 'protivnik' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+                </th>
+                <th (click)="sortiraj('minuti')" class="sortabilno centar">
+                  MIN {{ sortKolona === 'minuti' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+                </th>
+                <th (click)="sortiraj('poeni')" class="sortabilno centar">
+                  PTS {{ sortKolona === 'poeni' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+                </th>
+                <th (click)="sortiraj('dvaPoena')" class="sortabilno centar">
+                  2FG {{ sortKolona === 'dvaPoena' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+                </th>
+                <th (click)="sortiraj('triPoena')" class="sortabilno centar">
+                  3FG {{ sortKolona === 'triPoena' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+                </th>
+                <th (click)="sortiraj('slobodno')" class="sortabilno centar">
+                  FT {{ sortKolona === 'slobodno' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+                </th>
+                <th (click)="sortiraj('skokoviNapad')" class="sortabilno centar">
+                  OFF REB {{ sortKolona === 'skokoviNapad' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+                </th>
+                <th (click)="sortiraj('skokoviOdbrana')" class="sortabilno centar">
+                  DEF REB {{ sortKolona === 'skokoviOdbrana' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+                </th>
+                <th (click)="sortiraj('skokovi')" class="sortabilno centar">
+                  REB {{ sortKolona === 'skokovi' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+                </th>
+                <th (click)="sortiraj('asistencije')" class="sortabilno centar">
+                  AST {{ sortKolona === 'asistencije' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+                </th>
+                <th (click)="sortiraj('ukradene')" class="sortabilno centar">
+                  STL {{ sortKolona === 'ukradene' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+                </th>
+                <th (click)="sortiraj('izgubljene')" class="sortabilno centar">
+                  TOV {{ sortKolona === 'izgubljene' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+                </th>
+                <th (click)="sortiraj('blokade')" class="sortabilno centar">
+                  BLK {{ sortKolona === 'blokade' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+                </th>
+                <th (click)="sortiraj('licneGreske')" class="sortabilno centar">
+                  FOULS {{ sortKolona === 'licneGreske' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+                </th>
+                <th (click)="sortiraj('indeks')" class="sortabilno centar">
+                  PIR {{ sortKolona === 'indeks' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let u of statistikeIgracaUtakmica">
+                <td>{{ u.utakmica.datum }}</td>
+                <td>{{ u.protivnik }}</td>
+                <td>{{ u.statistikaIgraca.minuti }}</td>
+                <td>{{ u.statistikaIgraca.poeni }}</td>
+                <td>{{ u.statistikaIgraca.dvaPoenaPogodak}}/{{
+                  u.statistikaIgraca.dvaPoenaPogodak+u.statistikaIgraca.dvaPoenaPromasaj}}</td>
+                <td>{{ u.statistikaIgraca.triPoenaPogodak}}/{{ u.statistikaIgraca.triPoenaPogodak+
+                  u.statistikaIgraca.triPoenaPromasaj}}</td>
+                <td>{{ u.statistikaIgraca.slobodnoPogodak}}/{{u.statistikaIgraca.slobodnoPogodak+
+                  u.statistikaIgraca.slobodnoPromasaj}}</td>
+                <td>{{ u.statistikaIgraca.skokoviNapad}}</td>
+                <td>{{ u.statistikaIgraca.skokoviOdbrana}}</td>
+                <td>{{ u.statistikaIgraca.skokoviUkupno}}</td>
+                <td>{{ u.statistikaIgraca.asistencije}}</td>
+                <td>{{ u.statistikaIgraca.ukradene}}</td>
+                <td>{{ u.statistikaIgraca.izgubljene}}</td>
+                <td>{{ u.statistikaIgraca.blokade}}</td>
+                <td>{{ u.statistikaIgraca.licneGreske }}</td>
+                <td>{{ u.statistikaIgraca.indeks }}</td>
+              </tr>
+            </tbody>
+          </table>
+          <table class="utakmice-tabela" *ngIf="izabranaSezona>-1">
+            <thead>
+              <tr>
+                <th (click)="sortiraj('datum')" class="sortabilno">
+                  Datum {{ sortKolona === 'datum' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+                </th>
+                <th (click)="sortiraj('protivnik')" class="sortabilno">
+                  Protivnik {{ sortKolona === 'protivnik' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+                </th>
+                <th (click)="sortiraj('minuti')" class="sortabilno centar">
+                  MIN {{ sortKolona === 'minuti' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+                </th>
+                <th (click)="sortiraj('poeni')" class="sortabilno centar">
+                  PTS {{ sortKolona === 'poeni' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+                </th>
+                <th (click)="sortiraj('dvaPoena')" class="sortabilno centar">
+                  2FG {{ sortKolona === 'dvaPoena' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+                </th>
+                <th (click)="sortiraj('triPoena')" class="sortabilno centar">
+                  3FG {{ sortKolona === 'triPoena' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+                </th>
+                <th (click)="sortiraj('slobodno')" class="sortabilno centar">
+                  FT {{ sortKolona === 'slobodno' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+                </th>
+                <th (click)="sortiraj('skokoviNapad')" class="sortabilno centar">
+                  OFF REB {{ sortKolona === 'skokoviNapad' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+                </th>
+                <th (click)="sortiraj('skokoviOdbrana')" class="sortabilno centar">
+                  DEF REB {{ sortKolona === 'skokoviOdbrana' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+                </th>
+                <th (click)="sortiraj('skokovi')" class="sortabilno centar">
+                  REB {{ sortKolona === 'skokovi' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+                </th>
+                <th (click)="sortiraj('asistencije')" class="sortabilno centar">
+                  AST {{ sortKolona === 'asistencije' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+                </th>
+                <th (click)="sortiraj('ukradene')" class="sortabilno centar">
+                  STL {{ sortKolona === 'ukradene' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+                </th>
+                <th (click)="sortiraj('izgubljene')" class="sortabilno centar">
+                  TOV {{ sortKolona === 'izgubljene' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+                </th>
+                <th (click)="sortiraj('blokade')" class="sortabilno centar">
+                  BLK {{ sortKolona === 'blokade' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+                </th>
+                <th (click)="sortiraj('licneGreske')" class="sortabilno centar">
+                  FOULS {{ sortKolona === 'licneGreske' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+                </th>
+                <th (click)="sortiraj('indeks')" class="sortabilno centar">
+                  PIR {{ sortKolona === 'indeks' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let u of statistikeIgracaUtakmicaSezona">
+                <td>{{ u.utakmica.datum }}</td>
+                <td>{{ u.protivnik }}</td>
+                <td>{{ u.statistikaIgraca.minuti }}</td>
+                <td>{{ u.statistikaIgraca.poeni }}</td>
+                <td>{{ u.statistikaIgraca.dvaPoenaPogodak}}/{{
+                  u.statistikaIgraca.dvaPoenaPogodak+u.statistikaIgraca.dvaPoenaPromasaj}}</td>
+                <td>{{ u.statistikaIgraca.triPoenaPogodak}}/{{ u.statistikaIgraca.triPoenaPogodak+
+                  u.statistikaIgraca.triPoenaPromasaj}}</td>
+                <td>{{ u.statistikaIgraca.slobodnoPogodak}}/{{u.statistikaIgraca.slobodnoPogodak+
+                  u.statistikaIgraca.slobodnoPromasaj}}</td>
+                <td>{{ u.statistikaIgraca.skokoviNapad}}</td>
+                <td>{{ u.statistikaIgraca.skokoviOdbrana}}</td>
+                <td>{{ u.statistikaIgraca.skokoviUkupno}}</td>
+                <td>{{ u.statistikaIgraca.asistencije}}</td>
+                <td>{{ u.statistikaIgraca.ukradene}}</td>
+                <td>{{ u.statistikaIgraca.izgubljene}}</td>
+                <td>{{ u.statistikaIgraca.blokade}}</td>
+                <td>{{ u.statistikaIgraca.licneGreske }}</td>
+                <td>{{ u.statistikaIgraca.indeks }}</td>
+              </tr>
+            </tbody>
+          </table>
+
+        </div>
+
+        <div *ngIf="aktivanTab === 'podaci'" class="azuriraj-container">
+          <div class="azuriraj-box">
+
+            <div class="azuriraj-header">
+              <img src="bbballstats_logo.png" alt="logo">
+              <h2>Ažuriraj podatke</h2>
+            </div>
+
+            <!-- LIČNI PODACI -->
+            <div class="sekcija">
+              <div class="sekcija-naslov">Lični podaci</div>
+
+              <div class="input-group">
+                <input type="text" id="korisnickoIme" name="korisnickoIme" placeholder=" " [(ngModel)]="korisnickoImeI">
+                <label for="korisnickoIme">Korisničko ime</label>
+                <div class="input-line"></div>
+              </div>
+
+              <div class="input-group">
+                <input type="text" id="mejl" name="mejl" placeholder=" " [(ngModel)]="mejlI">
+                <label for="mejl">Mejl</label>
+                <div class="input-line"></div>
+              </div>
+
+              <div class="input-group">
+                <input type="text" id="ime" name="ime" placeholder=" " [(ngModel)]="imeI">
+                <label for="ime">Ime</label>
+                <div class="input-line"></div>
+              </div>
+
+              <div class="input-group">
+                <input type="text" id="prezime" name="prezime" placeholder=" " [(ngModel)]="prezimeI">
+                <label for="prezime">Prezime</label>
+                <div class="input-line"></div>
+              </div>
+              <div class="input-group file-group">
+                <input type="file" id="slika" class="file-input" (change)="slikaTrener($event)">
+                <label for="slika" class="file-label" [class.dragover]="isDragging" (dragover)="naDragOver($event)"
+                  (dragleave)="naDragLeave()" (drop)="naDrop($event)">
+                  <span class="label-text">Promeni profilnu sliku</span>
+                </label>
+                <div class="input-line"></div>
+              </div>
+
+              <div align="center" class="message">{{message}}</div>
+
+              <div align="center">
+                <button (click)="azurirajPodatke()">Sačuvaj podatke</button>
+              </div>
+            </div>
+
+            <!-- PROMENA LOZINKE -->
+            <div class="sekcija">
+              <div class="sekcija-naslov">Promena lozinke</div>
+
+              <div class="input-group">
+                <input type="password" id="staraLozinka" name="staraLozinka" placeholder=" "
+                  [(ngModel)]="staraLozinkaI">
+                <label for="staraLozinka">Stara lozinka</label>
+                <div class="input-line"></div>
+              </div>
+
+              <div class="input-group">
+                <input type="password" id="novaLozinka" name="novaLozinka" placeholder=" " [(ngModel)]="novaLozinkaI">
+                <label for="novaLozinka">Nova lozinka</label>
+                <div class="input-line"></div>
+              </div>
+
+              <div class="input-group">
+                <input type="password" id="potvrdaLozinke" name="potvrdaLozinke" placeholder=" "
+                  [(ngModel)]="potvrdaLozinkeI">
+                <label for="potvrdaLozinke">Potvrdi lozinku</label>
+                <div class="input-line"></div>
+              </div>
+
+              <div align="center">
+                <button (click)="promeniLozinku()">Promeni lozinku</button>
+              </div>
+            </div>
+
+            <div align="center" class="message">{{ messageL }}</div>
+
+          </div>
+
+
+        </div>
+
+        <div *ngIf="aktivanTab === 'izvestaj'">
+
+          <div class="sekcija-naslov">Novi izveštaji</div>
+          <div class="izvestaji-lista">
+            <div class="prazno" *ngIf="izvestajiNovi.length === 0">Nema novih izveštaja</div>
+            <div class="izvestaj-kartica nova" *ngFor="let iz of izvestajiNovi">
+              <div class="izvestaj-header">
+                <span class="izvestaj-datum">{{ iz.datum }}</span>
+                <span class="oznaka-novo">NOVO</span>
+              </div>
+
+              <div class="izvestaj-tekst" [class.skupljen]="!iz.otvoren">{{ iz.tekst }}</div>
+
+              <div class="izvestaj-akcije">
+                <button *ngIf="iz.tekst.length > 150" class="btn-prosiri" (click)="otvoriIzvestaj(iz)">
+                  {{ iz.otvoren ? 'Prikaži manje' : 'Prikaži više' }}
+                </button>
+                <button class="btn-procitano" (click)="procitaoIzvestaj(iz)">
+                  Označi kao pročitano
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="sekcija-naslov">Stari izveštaji</div>
+          <div class="izvestaji-lista">
+            <div class="prazno" *ngIf="izvestajiStari.length === 0">Nema starih izveštaja</div>
+            <div class="izvestaj-kartica" *ngFor="let iz of izvestajiStari">
+              <div class="izvestaj-header">
+                <span class="izvestaj-datum">{{ iz.datum }}</span>
+              </div>
+              <div class="izvestaj-tekst" [class.skupljen]="!iz.otvoren">{{ iz.tekst }}</div>
+              <button *ngIf="iz.tekst.length > 150" class="btn-prosiri" (click)="otvoriIzvestaj(iz)">
+                {{ iz.otvoren ? 'Prikaži manje' : 'Prikaži više' }}
+              </button>
+            </div>
+          </div>
+
+
+        </div>
+
+        <div *ngIf="aktivanTab === 'shootingChart'">
+
+          <div class="sc-wrapper">
+           <!-- <div class="sc-naslov">Shooting Chart</div> --> 
+
+            <!-- kontrole: mod + utakmica -->
+            <div class="sc-kontrole">
+              <div class="mod-opcije">
+                <label class="mod-opcija" [class.aktivan]="mod === 'trening'">
+                  <input type="radio" name="mod" value="trening" [(ngModel)]="mod" (change)="promeniMod()">
+                  <span>Trening</span>
+                </label>
+                <label class="mod-opcija" [class.aktivan]="mod === 'utakmica'">
+                  <input type="radio" name="mod" value="utakmica" [(ngModel)]="mod" (change)="promeniMod()">
+                  <span>Utakmica</span>
+                </label>
+              </div>
+              <select *ngIf="mod === 'utakmica'" [(ngModel)]="izabranaUtakmica" (change)="ucitajSuteve()"
+                class="sc-select">
+                <option [value]="0">-- Izaberite utakmicu --</option>
+                <option *ngFor="let u of (izabranaSezona==-1 ? utakmice : utakmiceSezona)" [value]="u.id">{{ u.datum }} · {{ u.domacin }} vs {{ u.gost
+                  }}</option>
+              </select>
+              <select *ngIf="mod === 'trening'" [(ngModel)]="treningId" (change)="ucitajSuteve()"
+                class="sc-select">
+                <option [value]="0">-- Izaberite trening --</option>
+                <option *ngFor="let t of treninzi" [value]="t.id">{{ t.opis}} · {{ t.datum }}</option>
+              </select>
+
+            </div>
+
+            <div class="sc-glavni">
+             
+              <!-- teren -->
+              <div class="sc-teren-box">
+               
+                <svg viewBox="0 0 560 560" class="sc-teren" #terenSvg>
+                  <!-- pozadina parketa -->
+                  <rect x="10" y="10" width="540" height="540" rx="8" fill="#3a3a3a" />
+
+                  <!-- linije terena -->
+                  <!-- tabla i koš (koš na 280,75) -->
+                  <line x1="255" y1="40" x2="305" y2="40" stroke="#d4af37" stroke-width="4" />
+                  <circle cx="280" cy="55" r="14" fill="none" stroke="#d4af37" stroke-width="2.5" />
+
+                  <!-- reket -->
+                  <rect x="220" y="10" width="120" height="150" fill="none" stroke="#d4af37" stroke-width="1.5" />
+                  <!-- krug slobodnih bacanja -->
+                  <circle cx="280" cy="160" r="60" fill="none" stroke="#d4af37" stroke-width="1.5" />
+
+                  <!-- luk za tri sa RAVNIM ćoškovima -->
+                  <path d="M 40 10 L 40 130 A 220 220 0 0 0 520 130 L 520 10" fill="none" stroke="#d4af37"
+                    stroke-width="2.5" />
+
+                  <!-- linije koje razdvajaju sektore (opciono, vizuelna pomoć) -->
+                  <!-- možeš dodati linije iz koša ka ivicama za 45° i centar granice -->
+
+                  <!-- PLOČICE sa procentom po zonama -->
+                  <g *ngFor="let z of zone">
+                    <rect [attr.x]="z.ploX - 23" [attr.y]="z.ploY - 22" width="46" height="20" rx="3"
+                      [attr.fill]="bojaPlocice(z.id)" stroke="#999" stroke-width="0.5" />
+                    <text [attr.x]="z.ploX" [attr.y]="z.ploY - 8" text-anchor="middle" font-size="11" font-weight="600"
+                      fill="#222">
+                      {{ zoneStat[z.id]?.pogodjeni ?? 0 }}/{{ zoneStat[z.id]?.ukupno ?? 0 }}
+                    </text>
+                    <rect [attr.x]="z.ploX - 23" [attr.y]="z.ploY" width="46" height="18" rx="3"
+                      [attr.fill]="bojaPlocice(z.id)" stroke="#999" stroke-width="0.5" />
+                    <text [attr.x]="z.ploX" [attr.y]="z.ploY + 13" text-anchor="middle" font-size="10" fill="#444">
+                      {{ (zoneStat[z.id]?.procenat ?? 0).toFixed(0) }}%
+                    </text>
+                  </g>
+
+                  <!-- tačke šuteva (klik briše) -->
+                  <circle *ngFor="let s of sutevi" [attr.cx]="s.x / 100 * 560" [attr.cy]="s.y / 100 * 560" r="6"
+                    [attr.fill]="s.pogodak ? '#2ecc71' : '#e74c3c'" stroke="#000" stroke-width="0.5" class="sut-tacka">
+                  </circle>
+                </svg>
+
+              </div>
+            </div>
+          </div>
+
+
+        </div>
+
+
+      </div>
+
+
+
+      <br><br>
+    </main>
+
+  </div>
+
+</body>
+<footer>
+  <div align="left">
+    <img src="bbballstats_logo.png" alt="logo" class="logo-img" />
+  </div>
+  <div align="center">
+    &copy; BBallStats, 2026
+  </div>
+  <div class="footer-contact" align="right">
+    <a href="tel:+381628421563" class="linkButton"> <img src="logoPhone_white.png" alt="logoPhone_white"
+        class="email-icon"> +381628421563 </a> <br>
+    <a href="mailto: bballstatsinfo@gmail.com" class="linkButton"> <img src="logoMail_white.png" alt="logoMail_white"
+        class="email-icon"> bballstatsinfo@gmail.com</a>
+  </div>
+</footer>

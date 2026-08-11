@@ -1,0 +1,189 @@
+<body>
+  <!-- Navigacioni meni -->
+  <header>
+    <img src="bbballstats_logo.png" alt="logo" class="logo-img" />
+    <div align="right">
+      <a (click)="trenerPocetna()" class="linkButton">Početna</a>
+      <a (click)="logOut()" class="linkButton">Odjavi se</a>
+    </div>
+  </header>
+  <div class="app-wrapper">
+
+  <main class="app-content">
+  <div class="igraci-wrapper">
+
+    <!-- TABELA -->
+    <div class="tabela-wrapper">
+      <table class="tabela">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Ime i prezime</th>
+            <th>Broj</th>
+            <th>Pozicija</th>
+            <th>Visina</th>
+            <th>Datum rodjenja</th>
+            <th>Akcije</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let igrac of sviIgraciTrenera">
+            <td *ngIf="igrac.korisnickoIme!=korisnikoImeUredi"><img src="{{igrac.slika}}" alt="slika" height="35px"
+                width="auto"></td>
+            <td *ngIf="igrac.korisnickoIme!=korisnikoImeUredi">{{ igrac.ime }} {{ igrac.prezime }}</td>
+            <td *ngIf="igrac.korisnickoIme!=korisnikoImeUredi">{{ igrac.broj }}</td>
+            <td *ngIf="igrac.korisnickoIme!=korisnikoImeUredi">{{igrac.pozicija}}</td>
+            <td *ngIf="igrac.korisnickoIme!=korisnikoImeUredi">{{igrac.visina}}cm</td>
+            <td *ngIf="igrac.korisnickoIme!=korisnikoImeUredi">{{igrac.datumRodjenja}}</td>
+            <td class="td-akcije" *ngIf="igrac.korisnickoIme!=korisnikoImeUredi">
+              <button class="btn-akcija profil" (click)="predjiNaProfil(igrac.korisnickoIme)">Profil</button>
+              <button class="btn-akcija obrisi" (click)="obrisiIgraca(igrac.korisnickoIme)">Obriši</button>
+              <button class="btn-akcija profil" (click)="uredi(igrac.korisnickoIme)">Uredi</button>
+              <button class="btn-akcija profil" (click)="izvestaj(igrac.korisnickoIme)">Napisi izvestaj</button>
+            </td>
+
+            <td *ngIf="igrac.korisnickoIme===korisnikoImeUredi"> <label for="photoEdit">Dodaj sliku</label> <input
+                type="file" id="photoEdit" style="display: none;" [class.dragover]="isDragging"
+                (dragover)="naDragOver($event)" (dragleave)="naDragLeave()" (drop)="naDrop($event)"
+                (change)="slikaTrener($event)"></td>
+            <td *ngIf="igrac.korisnickoIme===korisnikoImeUredi"><input type="text" [(ngModel)]="imeUredi"> <input
+                type="text" [(ngModel)]="prezimeUredi"></td>
+            <td *ngIf="igrac.korisnickoIme===korisnikoImeUredi"><input type="number" [(ngModel)]="brojUredi"></td>
+            <td *ngIf="igrac.korisnickoIme===korisnikoImeUredi">
+              <select [(ngModel)]="pozicijaUredi">
+                <option value="" disabled>Izaberi</option>
+                <option value="plej">Plej</option>
+                <option value="bek">Bek</option>
+                <option value="krilo">Krilo</option>
+                <option value="krilni centar">Krilni centar</option>
+                <option value="centar">Centar</option>
+              </select>
+            </td>
+            <td *ngIf="igrac.korisnickoIme===korisnikoImeUredi"><input type="number" [(ngModel)]="visinaUredi"></td>
+            <td *ngIf="igrac.korisnickoIme===korisnikoImeUredi"><input type="date" [(ngModel)]="datumRodjenjaUredi">
+            </td>
+            <td class="td-akcije" *ngIf="igrac.korisnickoIme===korisnikoImeUredi">
+              <button class="btn-akcija potvrdi" (click)="izmeni(igrac.korisnickoIme)">Potvrdi</button>
+              <button class="btn-akcija obrisi" (click)="odustani()">Odustani</button>
+            </td>
+
+          </tr>
+          <tr *ngIf="sviIgraciTrenera.length === 0">
+            <td colspan="5" class="td-prazno">Nema igrača</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+  <div class="login-container">
+    <div class="login-box">
+      <!-- Logotip ili Naziv aplikacije -->
+      <div class="login-header" align="center">
+        <span><img src="bbballstats_logo.png" alt="logo" class="logo-img-login">Dodavanje igraca</span>
+      </div>
+
+      <div class="login-form">
+        <div class="input-group">
+          <input type="email" id="email" required placeholder=" " [(ngModel)]="mejlI">
+          <label for="email">E-mail adresa</label>
+          <div class="input-line"></div>
+        </div>
+
+        <div class="input-group">
+          <input type="text" id="korisnickoIme" required placeholder=" " [(ngModel)]="korisnickoImeI">
+          <label>Korisničko ime</label>
+          <div class="input-line"></div>
+        </div>
+        <!-- Polje za Lozinku -->
+        <div class="input-group">
+          <input type="password" id="password" required placeholder=" " [(ngModel)]="lozinkaI">
+          <label for="password">Lozinka</label>
+          <div class="input-line"></div>
+        </div>
+        <div class="input-group">
+          <input type="password" id="passwordConfirmation" required placeholder=" " [(ngModel)]="potvrdaLozinkeI">
+          <label for="password">Potvrdi lozinku</label>
+          <div class="input-line"></div>
+        </div>
+        <div class="input-group">
+          <input type="text" id="ime" required placeholder=" " [(ngModel)]="imeI">
+          <label>Ime</label>
+          <div class="input-line"></div>
+        </div>
+        <div class="input-group">
+          <input type="text" id="prezime" required placeholder=" " [(ngModel)]="prezimeI">
+          <label>Prezime</label>
+          <div class="input-line"></div>
+        </div>
+        <div class="input-group">
+          <input type="text" id="brojI" required placeholder=" " [(ngModel)]="brojI">
+          <label>Broj dresa</label>
+          <div class="input-line"></div>
+        </div>
+        <div class="input-group">
+          <input type="number" id="visinaI" required placeholder=" " [(ngModel)]="visinaI">
+          <label>Visina</label>
+          <div class="input-line"></div>
+        </div>
+        <div class="input-group">
+          <select [(ngModel)]="pozicijaI" (focus)="selectFokus=true" (blur)="selectFokus=false">
+            <option value="" disabled>Izaberi poziciju igraca</option>
+            <option value="plej">Plej</option>
+            <option value="bek">Bek</option>
+            <option value="krilo">Krilo</option>
+            <option value="krilni centar">Krilni centar</option>
+            <option value="centar">Centar</option>
+          </select>
+          <label class="select-label" [style.color]="selectFokus ? '#00d2ff' : '#e74c3c'"
+            [style.color]="pozicijaI!='' ? '#00d2ff' : '#e74c3c'">Pozicija</label>
+          <div class="input-line"></div>
+        </div>
+        <div class="input-group">
+          <input type="date" id="datumRodjenja" required placeholder=" " [(ngModel)]="datumRodjenjaI">
+          <label>Datum rodjenja</label>
+          <div class="input-line"></div>
+        </div>
+        <div class="input-group">
+          <input type="text" id="klub" required placeholder=" " [(ngModel)]="klubI">
+          <label>Klub</label>
+          <div class="input-line"></div>
+        </div>
+        <div class="input-group file-group">
+          <input type="file" id="slika" class="file-input" (change)="slikaTrener($event)">
+          <label for="slika" class="file-label" [class.dragover]="isDragging" (dragover)="naDragOver($event)"
+            (dragleave)="naDragLeave()" (drop)="naDrop($event)">
+            <span class="label-text">Dodajte profilnu sliku</span>
+          </label>
+          <div class="input-line"></div>
+        </div>
+        <!-- Dugme za prijavu -->
+        <div align="center">
+          <button (click)="register()">Dodaj novog igraca</button>
+        </div>
+        <br>
+        <div align="center" class="message">{{message}}</div>
+      </div>
+    </div>
+  </div>
+  </main>
+
+  </div>
+
+</body>
+<footer>
+  <div align="left">
+    <img src="bbballstats_logo.png" alt="logo" class="logo-img" />
+  </div>
+  <div align="center">
+    &copy; BBallStats, 2026
+  </div>
+  <div class="footer-contact" align="right">
+    <a href="tel:+381628421563" class="linkButton"> <img src="logoPhone_white.png" alt="logoPhone_white"
+        class="email-icon"> +381628421563 </a> <br>
+    <a href="mailto: bballstatsinfo@gmail.com" class="linkButton"> <img src="logoMail_white.png" alt="logoMail_white"
+        class="email-icon"> bballstatsinfo@gmail.com</a>
+  </div>
+</footer>
+
+<router-outlet></router-outlet>

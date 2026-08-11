@@ -1,0 +1,474 @@
+.profil-wrapper {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+/* ZAGLAVLJE */
+.profil-header {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.profil-slika {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.profil-info {
+  flex: 1;
+}
+
+.sezona-izbor {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  justify-content: center;
+}
+
+.sezona-izbor label {
+  color: #d4af37;
+  font-weight: 600;
+}
+
+.sezona-select {
+  padding: 10px 16px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 8px;
+  color: #e8e8e8;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.profil-ime {
+  font-size: 24px;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 4px;
+}
+
+.profil-broj {
+  color: #95a5a6;
+  font-size: 18px;
+  font-weight: 400;
+}
+
+.profil-pozicija {
+  font-size: 15px;
+  color: #d4af37;
+  margin-bottom: 10px;
+}
+
+.profil-meta {
+  display: flex;
+  gap: 20px;
+  font-size: 13px;
+  color: #95a5a6;
+}
+
+/* PROSECI - kartice */
+.proseci-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.prosek-kartica {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 16px;
+  text-align: center;
+}
+
+.prosek-label {
+  font-size: 12px;
+  color: #95a5a6;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 6px;
+}
+
+.prosek-vrednost {
+  font-size: 28px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.prosek-vrednost.istaknuto {
+  color: #d4af37;
+}
+
+/* NASLOVI SEKCIJA */
+.sekcija-naslov {
+  font-size: 16px;
+  font-weight: 600;
+  color: #d4af37;
+  margin-bottom: 14px;
+  padding-left: 12px;
+  border-left: 3px solid #d4af37;
+}
+
+/* GRAFIKON */
+.grafikon-wrapper {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 32px;
+}
+
+.grafikon-wrapper canvas {
+  max-height: 260px;
+}
+
+/* TABELA proseka */
+.prosek-tabela {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 32px;
+}
+
+.prosek-tabela th {
+  background: rgba(212, 175, 55, 0.12);
+  color: #d4af37;
+  font-weight: 600;
+  text-align: left;
+  padding: 12px 16px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.prosek-tabela th:nth-child(1),
+.prosek-tabela td:nth-child(1),
+.prosek-tabela th:nth-child(2),
+.prosek-tabela td:nth-child(2){
+  width: 85px;
+  text-align: center;
+}
+
+.prosek-tabela th:nth-child(n+3),
+.prosek-tabela td:nth-child(n+3) {
+  text-align: center;
+}
+
+.prosek-tabela td {
+  padding: 12px 16px;
+  border-top: 1px solid rgba(212, 175, 55, 0.08);
+  color: #e8e8e8;
+  font-size: 14px;
+}
+
+.prosek-tabela tbody tr {
+  transition: background 0.15s ease;
+}
+
+.prosek-tabela tbody tr:hover {
+  background: rgba(212, 175, 55, 0.06);
+}
+
+
+/* TABELA UTAKMICA */
+.utakmice-tabela {
+  width: 100%;
+  border-collapse: collapse;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 32px;
+}
+
+.utakmice-tabela th {
+  background: rgba(212, 175, 55, 0.12);
+  color: #d4af37;
+  font-weight: 600;
+  text-align: left;
+  padding: 12px 16px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.utakmice-tabela th:nth-child(n+3),
+.utakmice-tabela td:nth-child(n+3) {
+  text-align: center;
+}
+
+.utakmice-tabela th.sortabilno {
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s ease;
+}
+
+.utakmice-tabela th.sortabilno:hover {
+  background: rgba(212, 175, 55, 0.2);
+}
+
+.utakmice-tabela .centar {
+  text-align: center;
+}
+
+.utakmice-tabela td {
+  padding: 12px 16px;
+  border-top: 1px solid rgba(212, 175, 55, 0.08);
+  color: #e8e8e8;
+  font-size: 14px;
+}
+
+.utakmice-tabela tbody tr {
+  transition: background 0.15s ease;
+}
+
+.utakmice-tabela tbody tr:hover {
+  background: rgba(212, 175, 55, 0.06);
+}
+
+/* ako igrač nema sliku - fallback inicijali */
+.profil-inicijali {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: rgba(212, 175, 55, 0.15);
+  border: 2px solid rgba(212, 175, 55, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  font-weight: 600;
+  color: #d4af37;
+  flex-shrink: 0;
+}
+.sc-wrapper {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+}
+.sc-naslov {
+  font-size: 22px;
+  font-weight: 600;
+  color: #d4af37;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.sc-kontrole {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.mod-opcije {
+  display: flex;
+  gap: 8px;
+}
+.mod-opcija {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  cursor: pointer;
+  color: #e8e8e8;
+}
+.mod-opcija.aktivan {
+  background: rgba(212, 175, 55, 0.15);
+  border-color: rgba(212, 175, 55, 0.5);
+  color: #d4af37;
+}
+.mod-opcija input {
+  accent-color: #d4af37;
+}
+
+.sc-select {
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 8px;
+  color: #e8e8e8;
+}
+
+.sc-glavni {
+  display: flex;
+  gap: 20px;
+}
+
+.sc-igraci {
+  flex: 0 0 200px;
+}
+.sc-podnaslov {
+  color: #d4af37;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+.igrac-red {
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  margin-bottom: 6px;
+  cursor: pointer;
+  color: #e8e8e8;
+  transition: all 0.15s ease;
+}
+.igrac-red:hover {
+  background: rgba(212, 175, 55, 0.08);
+}
+.igrac-red.izabran {
+  background: rgba(212, 175, 55, 0.2);
+  border-color: rgba(212, 175, 55, 0.5);
+  color: #d4af37;
+  font-weight: 600;
+}
+
+.sc-teren-box {
+  flex: 1;
+}
+
+.unos-toggle {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+.toggle-btn {
+  padding: 10px 24px;
+  background: rgba(46, 204, 113, 0.12);
+  border: 1px solid rgba(46, 204, 113, 0.3);
+  border-radius: 6px;
+  color: #2ecc71;
+  font-weight: 600;
+  cursor: pointer;
+}
+.toggle-btn.aktivan {
+  background: #2ecc71;
+  color: #fff;
+}
+.toggle-btn.miss {
+  background: rgba(231, 76, 60, 0.12);
+  border-color: rgba(231, 76, 60, 0.3);
+  color: #e74c3c;
+}
+.toggle-btn.miss.aktivan {
+  background: #e74c3c;
+  color: #fff;
+}
+
+.sc-teren {
+  width: 800px;
+  height: 650px;
+  cursor: crosshair;
+  display: block;
+}
+.sut-tacka {
+  cursor: pointer;
+}
+.sut-tacka:hover {
+  r: 9;
+  stroke: #d4af37;
+  stroke-width: 2;
+}
+
+.hint,
+.message {
+  text-align: center;
+  margin-top: 10px;
+  color: #95a5a6;
+  font-size: 13px;
+}
+.message {
+  color: #e74c3c;
+}
+.btn-zapocni {
+  padding: 10px 24px;
+  background: rgba(46, 204, 113, 0.15);
+  border: 1px solid rgba(46, 204, 113, 0.5);
+  border-radius: 8px;
+  color: #2ecc71;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-zapocni:hover {
+  background: #2ecc71;
+  color: #fff;
+}
+
+.btn-zavrsi {
+  padding: 10px 24px;
+  background: rgba(231, 76, 60, 0.12);
+  border-color: rgba(231, 76, 60, 0.3);
+  color: #e74c3c;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-zavrsi:hover {
+  background: #e74c3c;
+  color: #fff;
+}
+
+.trening-aktivan {
+  padding: 8px 16px;
+  background: rgba(46, 204, 113, 0.15);
+  border-radius: 8px;
+  color: #2ecc71;
+  font-weight: 600;
+}
+.tab-bar {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.tab-bar-unutra {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.tab {
+  padding: 12px 22px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: #95a5a6;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: none !important;
+}
+
+.tab:hover {
+  color: #d4af37;
+}
+
+.tab.aktivan {
+  color: #d4af37;
+  border-bottom-color: #d4af37;
+}

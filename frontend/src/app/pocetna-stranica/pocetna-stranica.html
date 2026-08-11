@@ -1,0 +1,116 @@
+<body>
+  <!-- Navigacioni meni -->
+  <header>
+    <img src="bbballstats_logo.png" alt="logo" class="logo-img" />
+    <div align="right">
+      <a (click)="registrationForm()" class="linkButton">Registruj se</a>
+      <a (click)="loginForm()" class="linkButton">Prijavi se</a>
+    </div>
+  </header>
+
+  <!-- Glavni sadržaj -->
+  <div class="app-wrapper">
+    <main class="app-content">
+      <section class="hero">
+        <div class="hero-content">
+          <h1>Pretvorite događaje sa terena u precizne podatke.<br /></h1>
+          <p>
+            BBallStats omogućava trenerima u svim ligama da prate, analiziraju i unaprede igru svog tima kroz naprednu
+            statistiku u realnom vremenu. Zaboravite na sveske i papire – vodite utakmicu kao profesionalac. <br>
+            <br>
+            <button (click)="loginForm()">Prijavi se</button>
+            <button (click)="registrationForm()">Registruj se</button>
+        </div>
+        <div id="initial-loader">
+          <img src="bbballstats_logo.png" class="loader-logo" alt="Logo" />
+        </div>
+        <div class="hero-image">
+          <!-- Možeš zameniti ovaj URL slikom po želji -->
+          <img src="bbballstats_logo.png" alt="Programiranje" />
+        </div>
+      </section>
+      <div class="promo">
+        <section class="mogucnosti">
+          <div class="mogucnosti-naslov">
+            <h2>Sve što treneru treba</h2>
+            <p>Od statistike uživo do napredne analize šuta</p>
+          </div>
+
+          <div class="mogucnosti-grid">
+            <div class="mogucnost-kartica">
+              <span class="mogucnost-ikona">🏀</span>
+              <h3>Statistika uživo</h3>
+              <p>Pratite svaki šut, skok i asistenciju u realnom vremenu tokom utakmice.</p>
+            </div>
+            <div class="mogucnost-kartica">
+              <span class="mogucnost-ikona">🎯</span>
+              <h3>Shooting chart</h3>
+              <p>Analizirajte šut po zonama terena sa procentima pogotka.</p>
+            </div>
+            <div class="mogucnost-kartica">
+              <span class="mogucnost-ikona">📊</span>
+              <h3>Timska analiza</h3>
+              <p>Uporedite proseke igrača i pratite formu kroz celu sezonu.</p>
+            </div>
+            <div class="mogucnost-kartica">
+              <span class="mogucnost-ikona">📋</span>
+              <h3>Izveštaji igračima</h3>
+              <p>Šaljite lične izveštaje i pratite razvoj svakog igrača.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- KAKO RADI -->
+        <section class="kako-radi">
+          <div class="mogucnosti-naslov">
+            <h2>Kako radi</h2>
+          </div>
+          <div class="koraci">
+            <div class="korak">
+              <div class="korak-broj">1</div>
+              <h3>Registruj klub</h3>
+              <p>Napravi nalog i dodaj svoje igrače.</p>
+            </div>
+            <div class="korak">
+              <div class="korak-broj">2</div>
+              <h3>Vodi utakmicu</h3>
+              <p>Beleži statistiku uživo tokom meča.</p>
+            </div>
+            <div class="korak">
+              <div class="korak-broj">3</div>
+              <h3>Analiziraj</h3>
+              <p>Pregledaj statistiku, shooting chart i forme.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- POZIV NA AKCIJU -->
+        <section class="cta-dole">
+          <h2>Spremni da počnete?</h2>
+          <p>Pridružite se trenerima koji vode statistiku kao profesionalci.</p>
+          <button (click)="registrationForm()">Registruj se</button>
+        </section>
+      </div>
+    </main>
+  </div>
+
+
+
+
+</body>
+<footer>
+  <div align="left">
+    <img src="bbballstats_logo.png" alt="logo" class="logo-img" />
+  </div>
+  <div align="center">
+    &copy; BBallStats, 2026
+  </div>
+  <div class="footer-contact" align="right">
+    <a href="tel:+381628421563" class="linkButton"> <img src="logoPhone_white.png" alt="logoPhone_white"
+        class="email-icon"> +381628421563 </a> <br>
+    <a href="mailto: bballstatsinfo@gmail.com" class="linkButton"> <img src="logoMail_white.png" alt="logoMail_white"
+        class="email-icon"> bballstatsinfo@gmail.com</a>
+  </div>
+</footer>
+
+<router-outlet></router-outlet>

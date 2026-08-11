@@ -1,0 +1,601 @@
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #5c5c5c; /* Tamna sportska pozadina */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding: 20px;
+}
+
+/* Kontejner same forme (Kartica) */
+.login-box {
+  background: #161922; /* Malo svetlija siva za kontrast */
+  border: 1px solid #242936;
+  border-radius: 12px;
+  padding: 40px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+}
+
+.logo-img-login {
+  height: 65px; /* visina — ovo kontroliše veličinu */
+  width: auto; /* širina se sama izračuna, da se ne deformiše */
+  display: block;
+}
+
+/* Zaglavlje forme */
+.login-header {
+  display: flex;
+  flex-direction: column; /* Ređa elemente jedan ispod drugog */
+  align-items: center; /* Centrira ih horizontalno na sredinu */
+  justify-content: center; /* Centrira ih vertikalno ukoliko ima prostora */
+  text-align: center;
+  margin-bottom: 35px;
+}
+
+.login-header h2 {
+  color: #ffffff;
+  font-size: 32px;
+  font-weight: 800;
+  margin: 0 0 8px 0;
+  letter-spacing: 1px;
+}
+
+/* Svetlo plavi akcenat za "Stats" kao na logou */
+.login-header h2 span {
+  color: #00d2ff;
+  font-weight: 300;
+}
+
+.login-header p {
+  color: #718096;
+  font-size: 14px;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+/* Animacija i struktura input polja */
+.input-group {
+  position: relative;
+  margin-bottom: 30px;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 12px 0;
+  background: none;
+  border: none;
+  border-bottom: 2px solid #242936;
+  color: #ffffff;
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+/* Plutajući placeholder (Labela) */
+.input-group label {
+  position: absolute;
+  left: 0;
+  top: 12px;
+  color: #f94f4fc3;
+  font-size: 16px;
+  pointer-events: none;
+  transition: all 0.3s ease;
+}
+
+/* Efekat kada je polje fokusirano ili kada ima tekst */
+.input-group input:focus ~ label,
+.input-group input:not(:placeholder-shown) ~ label {
+  top: -12px;
+  font-size: 12px;
+  color: #00d2ff; /* Menja boju u plavu pri fokusu */
+}
+
+/* Donja linija koja se širi pri kliku */
+.input-group .input-line {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #d4af37, #997c08);
+  transition: width 0.3s ease;
+}
+
+.input-group input:focus ~ .input-line {
+  width: 100%;
+}
+
+/* Ikonica kalendara u zlatnoj boji (ista nijansa kao input-line) */
+.input-group input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(70%) sepia(60%) saturate(500%) hue-rotate(0deg) brightness(95%);
+  cursor: pointer;
+}
+
+/* Akcije unutar forme (Zaboravljena lozinka) */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 25px;
+}
+
+.forgot-password {
+  color: #718096;
+  font-size: 13px;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.forgot-password:hover {
+  color: #00d2ff;
+}
+
+/* Moćno narandžasto "košarkaško" dugme sa gradijentom */
+.btn-login {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #ff512f 0%, #dd2476 100%);
+  border: none;
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(221, 36, 118, 0.3);
+  transition: all 0.3s ease;
+}
+
+.btn-login:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(221, 36, 118, 0.5);
+  background: linear-gradient(135deg, #ff6243 0%, #e63384 100%);
+}
+
+.btn-login:active {
+  transform: translateY(0);
+}
+
+.linkButtonLogin {
+  color: #718096;
+  text-decoration: none;
+  padding: 8px 4px;
+  font-weight: 500;
+  display: inline-block;
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+.linkButtonLogin::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background-color: #d4af37;
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+}
+
+.linkButtonLogin:hover {
+  transform: translateY(-2px);
+  color: #d4af37;
+}
+
+.linkButtonLogin:hover::after {
+  width: 100%;
+}
+.input-group input:invalid:not(:placeholder-shown):not(:focus) {
+ border-bottom: 2px solid #ff3838a7; /* Crvena ivica */
+}
+
+/* Menjamo boju plutajuće labele u crvenu u istom scenariju */
+.input-group input:invalid:not(:placeholder-shown):not(:focus) ~ label {
+  color: #ff3838;
+}
+/* Sakrivamo originalni ružni input u potpunosti */
+.file-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+/* Stil za novu labelu koja glumi input box */
+.file-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 12px 0 !important;
+  cursor: pointer;
+  position: static !important; /* Isključujemo apsolutno pozicioniranje običnih labela */
+  pointer-events: auto !important; /* Dozvoljavamo klik */
+}
+
+/* Tekst iznad polja (uvek podignut i plav) */
+.file-label .label-text {
+  position: absolute;
+  top: 0px;
+  font-size: 16px;
+  color: #5b5b5b; /* Stalno plava boja */
+  letter-spacing: 0.5px;
+}
+
+/* Tekst unutar samog polja (gde piše "Izaberi fajl...") */
+.file-label .file-name {
+  color: #718096;
+  font-size: 16px;
+  transition: color 0.3s ease;
+}
+
+/* Kada pređeš mišem preko polja, tekst malo posvetli */
+.file-label:hover .file-name {
+  color: #ffffff;
+}
+
+/* Donja linija koja je stalno fiksna i u bojama aplikacije */
+.input-line.static-line {
+  width: 100% !important;
+  background: #242936; /* Tamna linija kao kod ostalih polja dok nisu u fokusu */
+}
+
+/* Opciono: Možeš staviti plavu liniju ako želiš da se ističe da je to dugme */
+.file-group:hover .static-line {
+  background: linear-gradient(90deg, #00D2FF, #0066FF);
+}
+
+.input-group select {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #555;
+  color: #ffffff;
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  padding: 10px 0;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+}
+
+.input-group select:focus {
+  border-bottom: 2px solid #d4af37;
+}
+
+/* opcije u dropdownu */
+.input-group select option {
+  background: #1a1a2e;
+  color: #ffffff;
+}
+
+/* label iznad selecta — isti stil kao floating label */
+.input-group .select-label {
+  position: absolute;
+  top: -18px;
+  left: 0;
+  font-size: 12px;
+  color: #f94f4fc3;
+  transition: color 0.3s ease;
+  pointer-events: none;
+}
+
+.input-group select:focus ~ .select-label {
+  color: #00d2ff;
+}
+
+.igraci-wrapper {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 0 1.5rem;
+}
+
+.igraci-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.igraci-title {
+  font-size: 22px;
+  font-weight: 500;
+  color: #ffffff;
+}
+
+.btn-novi {
+  background-color: #d4af37;
+  border: none;
+  border-radius: 8px;
+  color: #ffffff;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-novi:hover {
+  background-color: #6b5802;
+  transform: translateY(-2px);
+  box-shadow: none;
+}
+
+/* SEARCH */
+.search-wrapper {
+  margin-bottom: 1.5rem;
+}
+
+.search-input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #ffffff;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  padding: 10px 14px;
+  outline: none;
+  transition: border-color 0.3s ease;
+  box-sizing: border-box;
+}
+
+.search-input:focus {
+  border-color: #d4af37;
+}
+
+.search-input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+/* TABELA */
+.tabela-wrapper {
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.tabela {
+  table-layout: fixed;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tabela thead tr {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.tabela th {
+  text-align: left;
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.tabela th:nth-child(1),
+.tabela td:nth-child(1) {
+  width: 70px;
+  box-sizing: border-box;
+}
+
+.tabela th:nth-child(2),
+.tabela td:nth-child(2) {
+  width: 15%;
+  box-sizing: border-box;
+}
+
+.tabela th:nth-child(3),
+.tabela td:nth-child(3) {
+  width: 10%;
+  box-sizing: border-box;
+}
+
+.tabela th:nth-child(4),
+.tabela td:nth-child(4) {
+  width: 12%;
+  box-sizing: border-box;
+}
+
+.tabela th:nth-child(5),
+.tabela td:nth-child(5) {
+  width: 12%;
+  box-sizing: border-box;
+}
+
+.tabela th:nth-child(6),
+.tabela td:nth-child(6) {
+  width: 17%;
+  box-sizing: border-box;
+}
+
+.tabela th:nth-child(7),
+.tabela td:nth-child(7) {
+  width: 45%;
+  box-sizing: border-box;
+}
+
+.tabela tbody tr {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: background 0.2s ease;
+}
+
+.tabela tbody tr:last-child {
+  border-bottom: none;
+}
+
+.tabela tbody tr:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.tabela td {
+  padding: 12px 16px;
+  font-size: 14px;
+  color: #ffffff;
+}
+
+.td-broj {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 13px;
+  width: 40px;
+}
+
+.td-korisnicko {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 13px;
+}
+
+.td-klub {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 13px;
+}
+
+.td-akcije {
+  display: flex;
+  gap: 8px;
+}
+
+.td-prazno {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 14px;
+  padding: 2rem;
+}
+
+
+.btn-akcija {
+  font-family: 'Poppins', sans-serif;
+  font-size: 12px;
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: none;
+}
+
+.btn-akcija.profil {
+  background: rgba(212, 175, 55, 0.15);
+  border-color: rgba(212, 175, 55, 0.3);
+  color: #d4af37;
+}
+
+.btn-akcija.profil:hover {
+  background: rgba(212, 175, 55, 0.3);
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-akcija.obrisi {
+  background: rgba(231, 76, 60, 0.15);
+  border-color: rgba(231, 76, 60, 0.3);
+  color: #e74c3c;
+}
+
+.btn-akcija.obrisi:hover {
+  background: rgba(231, 76, 60, 0.3);
+  transform: none;
+  box-shadow: none;
+}
+
+.tabela tbody td input[type="text"],
+.tabela tbody td input[type="number"],
+.tabela tbody td input[type="date"] {
+  width: 100%;
+  min-width: 0;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  color: #ffffff;
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px;
+  padding: 6px 8px;
+  outline: none;
+  transition: border-color 0.3s ease;
+  box-sizing: border-box;
+}
+
+.tabela tbody td input[type="text"]:focus,
+.tabela tbody td input[type="number"]:focus,
+.tabela tbody td input[type="date"]:focus {
+  border-color: #d4af37;
+}
+
+/* dva inputa (ime i prezime) jedan pored drugog */
+.tabela tbody td input[type="text"] {
+  margin-bottom: 6px;
+}
+
+.tabela tbody td input[type="text"]:last-child {
+  margin-bottom: 0;
+}
+
+/* file input */
+.tabela tbody td input[type="file"] {
+  font-family: 'Poppins', sans-serif;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.tabela tbody td input[type="file"]::file-selector-button {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  color: #ffffff;
+  font-family: 'Poppins', sans-serif;
+  font-size: 12px;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-right: 8px;
+}
+
+.tabela tbody td input[type="file"]::file-selector-button:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* select za poziciju - ako koristiš */
+.tabela tbody td select {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  color: #ffffff;
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px;
+  padding: 6px 10px;
+  outline: none;
+}
+
+.tabela tbody td select option {
+  background: #2a2a2a;
+  color: #ffffff;
+}
+
+/* red u edit modu - blagi highlight */
+.tabela tbody tr:has(input) {
+  background: rgba(212, 175, 55, 0.05);
+}
+
+/* Potvrdi dugme */
+.btn-akcija.potvrdi {
+  background: rgba(39, 174, 96, 0.15);
+  border-color: rgba(39, 174, 96, 0.3);
+  color: #27ae60;
+}
+
+.btn-akcija.potvrdi:hover {
+  background: rgba(39, 174, 96, 0.3);
+}

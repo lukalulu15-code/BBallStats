@@ -1,0 +1,251 @@
+/* Resetovanje i osnovni stilovi za pozadinu */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #5c5c5c; /* Tamna sportska pozadina */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding: 20px;
+}
+
+.zaboravio-container {
+  display: flex;
+  justify-content: center;
+  padding-top: 35px;
+  margin-top: 35px;
+  margin-bottom: 35px;
+  align-items: center;
+  background-color: #5c5c5c; /* Tamna sportska pozadina */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding-bottom: 35px;
+}
+
+/* Kontejner same forme (Kartica) */
+.login-box {
+  background: #161922; /* Malo svetlija siva za kontrast */
+  border: 1px solid #242936;
+  border-radius: 12px;
+  padding: 40px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+}
+
+.logo-img-login {
+  height: 65px; /* visina — ovo kontroliše veličinu */
+  width: auto; /* širina se sama izračuna, da se ne deformiše */
+  display: block;
+}
+
+/* Zaglavlje forme */
+.login-header {
+  display: flex;
+  flex-direction: column; /* Ređa elemente jedan ispod drugog */
+  align-items: center; /* Centrira ih horizontalno na sredinu */
+  justify-content: center; /* Centrira ih vertikalno ukoliko ima prostora */
+  text-align: center;
+  margin-bottom: 35px;
+}
+
+.login-header h2 {
+  color: #ffffff;
+  font-size: 32px;
+  font-weight: 800;
+  margin: 0 0 8px 0;
+  letter-spacing: 1px;
+}
+
+/* Svetlo plavi akcenat za "Stats" kao na logou */
+.login-header h2 span {
+  color: #00d2ff;
+  font-weight: 300;
+}
+
+.login-header p {
+  color: #718096;
+  font-size: 14px;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+/* Animacija i struktura input polja */
+.input-group {
+  position: relative;
+  margin-bottom: 30px;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 12px 0;
+  background: none;
+  border: none;
+  border-bottom: 2px solid #242936;
+  color: #ffffff;
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+/* Plutajući placeholder (Labela) */
+.input-group label {
+  position: absolute;
+  left: 0;
+  top: 12px;
+  color: #718096;
+  font-size: 16px;
+  pointer-events: none;
+  transition: all 0.3s ease;
+}
+
+/* Efekat kada je polje fokusirano ili kada ima tekst */
+.input-group input:focus ~ label,
+.input-group input:not(:placeholder-shown) ~ label {
+  top: -12px;
+  font-size: 12px;
+  color: #00d2ff; /* Menja boju u plavu pri fokusu */
+}
+
+/* Donja linija koja se širi pri kliku */
+.input-group .input-line {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #d4af37, #997c08);
+  transition: width 0.3s ease;
+}
+
+.input-group input:focus ~ .input-line {
+  width: 100%;
+}
+
+/* Akcije unutar forme (Zaboravljena lozinka) */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 25px;
+}
+
+.forgot-password {
+  color: #718096;
+  font-size: 13px;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.forgot-password:hover {
+  color: #00d2ff;
+}
+
+/* Moćno narandžasto "košarkaško" dugme sa gradijentom */
+.btn-login {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #ff512f 0%, #dd2476 100%);
+  border: none;
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(221, 36, 118, 0.3);
+  transition: all 0.3s ease;
+}
+
+.btn-login:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(221, 36, 118, 0.5);
+  background: linear-gradient(135deg, #ff6243 0%, #e63384 100%);
+}
+
+.btn-login:active {
+  transform: translateY(0);
+}
+
+.linkButtonLogin {
+  color: #718096;
+  text-decoration: none;
+  padding: 8px 4px;
+  font-weight: 500;
+  display: inline-block;
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+.linkButtonLogin::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background-color: #d4af37;
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+}
+
+.linkButtonLogin:hover {
+  transform: translateY(-2px);
+  color: #d4af37;
+}
+
+.linkButtonLogin:hover::after {
+  width: 100%;
+}
+
+
+.radio-grupa {
+  margin: 20px 0;
+  position: static;   /* poništi eventualno nasledeno absolute */
+}
+
+.radio-naslov {
+  display: block;
+  color: #718096;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+.radio-opcije {
+  display: flex;
+  gap: 24px;
+}
+
+.radio-opcija {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  color: #e8e8e8;
+  font-size: 15px;
+  position: static;   /* poništi absolute ako ga globalni CSS nameće */
+}
+
+.radio-opcija input[type="radio"] {
+  position: static;   /* radio na svom mestu, ne apsolutno */
+  accent-color: #d4af37;
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  margin: 0;
+}
+
+.radio-opcija span {
+  position: static;   /* tekst pored radija, ne preklopljen */
+}
+
+.forma-wrapper {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 0 1.5rem;
+}
+
+.forma-title {
+  font-size: 22px;
+  font-weight: 500;
+  color: #ffffff;
+  margin-bottom: 1.5rem;
+}

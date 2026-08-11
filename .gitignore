@@ -1,0 +1,26 @@
+# Claude Code local settings (not part of the project)
+.claude/
+
+# Dependencies
+**/node_modules/
+
+# Build output
+**/dist/
+
+# Environment variables (contains secrets)
+**/.env
+
+# Lock files
+package-lock.json
+
+# IDE
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea/
+
+# System files
+.DS_Store
+Thumbs.db

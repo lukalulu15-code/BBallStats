@@ -1,0 +1,137 @@
+.mogucnosti, .kako-radi, .cta-dole {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 60px 24px;
+}
+
+.mogucnosti-naslov {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.mogucnosti-naslov h2 {
+  font-size: 32px;
+  color: #d4af37;
+  margin-bottom: 8px;
+}
+
+.mogucnosti-naslov p {
+  font-size: 17px;
+  color: #b0b0b0;
+}
+
+.mogucnosti-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+.mogucnost-kartica {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 28px 24px;
+  transition: all 0.2s ease;
+}
+
+.mogucnost-kartica:hover {
+  border-color: rgba(212, 175, 55, 0.4);
+  transform: translateY(-4px);
+}
+
+.mogucnost-ikona {
+  font-size: 36px;
+  display: block;
+  margin-bottom: 16px;
+}
+
+.mogucnost-kartica h3 {
+  font-size: 18px;
+  color: #fff;
+  margin-bottom: 10px;
+}
+
+.mogucnost-kartica p {
+  font-size: 15px;
+  color: #b0b0b0;
+  line-height: 1.6;
+}
+
+/* KAKO RADI */
+.koraci {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 24px;
+}
+
+.korak {
+  text-align: center;
+  padding: 24px;
+}
+
+.korak-broj {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 16px;
+  background: rgba(212, 175, 55, 0.15);
+  border: 2px solid #d4af37;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 700;
+  color: #d4af37;
+}
+
+.korak h3 {
+  font-size: 18px;
+  color: #fff;
+  margin-bottom: 8px;
+}
+
+.korak p {
+  font-size: 15px;
+  color: #b0b0b0;
+}
+
+/* CTA */
+.cta-dole {
+  text-align: center;
+  background: rgba(212, 175, 55, 0.06);
+  border-radius: 16px;
+  border: 1px solid rgba(212, 175, 55, 0.15);
+}
+
+.cta-dole h2 {
+  font-size: 28px;
+  color: #fff;
+  margin-bottom: 12px;
+}
+
+.cta-dole p {
+  font-size: 16px;
+  color: #b0b0b0;
+  margin-bottom: 24px;
+}
+
+.cta-dugme {
+  padding: 14px 36px;
+  background: #d4af37;
+  border: none;
+  border-radius: 8px;
+  color: #1a1a1a;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cta-dugme:hover {
+  background: #e0bd47;
+  transform: translateY(-2px);
+}
+
+.promo{
+    margin-bottom: 30px;
+}

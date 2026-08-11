@@ -1,0 +1,139 @@
+<body>
+    <!-- Navigacioni meni -->
+    <header>
+        <img src="bbballstats_logo.png" alt="logo" class="logo-img" />
+        <div align="right">
+            <a (click)="trenerPocetna()" class="linkButton">Početna</a>
+            <a (click)="logOut()" class="linkButton">Odjavi se</a>
+        </div>
+    </header>
+
+    <div class="app-wrapper">
+
+        <main class="app-content">
+            <div class="sc-wrapper">
+                <div class="sc-naslov">Shooting Chart</div>
+
+                <!-- kontrole: mod + utakmica -->
+                <div class="sc-kontrole">
+                    <div class="mod-opcije">
+                        <label class="mod-opcija" [class.aktivan]="mod === 'trening'">
+                            <input type="radio" name="mod" value="trening" [(ngModel)]="mod" (change)="promeniMod()">
+                            <span>Trening</span>
+                        </label>
+                        <label class="mod-opcija" [class.aktivan]="mod === 'utakmica'">
+                            <input type="radio" name="mod" value="utakmica" [(ngModel)]="mod" (change)="promeniMod()">
+                            <span>Utakmica</span>
+                        </label>
+                    </div>
+
+                    <select *ngIf="mod === 'utakmica'" [(ngModel)]="izabranaUtakmica" (change)="ucitajSuteve()"
+                        class="sc-select">
+                        <option [value]="0">-- Izaberite utakmicu --</option>
+                        <option *ngFor="let u of utakmice" [value]="u.id">{{ u.datum }} · {{ u.domacin }} vs {{ u.gost
+                            }}</option>
+                    </select>
+
+                    <!-- dugme Započni trening - samo za trening mod, izabran igrač, još nije započet -->
+                    <button *ngIf="mod === 'trening' && izabraniIgrac !== '' && !treningZapocet" class="btn-zapocni"
+                        (click)="zapocniTrening()">
+                        Započni trening
+                    </button>
+                    <!-- oznaka da je trening u toku -->
+                    <span *ngIf="mod === 'trening' && treningZapocet" class="trening-aktivan">
+                        Trening u toku
+                    </span>
+                    <button *ngIf="mod === 'trening' && izabraniIgrac !== '' && treningZapocet" class="btn-zavrsi"
+                        (click)="zavrsiTrening()">
+                        Zavrsi trening
+                    </button>
+                </div>
+
+                <div class="sc-glavni">
+                    <!-- lista igrača -->
+                    <div class="sc-igraci">
+                        <div class="sc-podnaslov">Igrači</div>
+                        <div class="igrac-red" *ngFor="let ig of igraci"
+                            [class.izabran]="izabraniIgrac === ig.korisnickoIme"
+                            (click)="izaberiIgraca(ig.korisnickoIme)">
+                            #{{ ig.broj }} {{ ig.ime }} {{ ig.prezime }}
+                        </div>
+                    </div>
+
+                    <!-- teren -->
+                    <div class="sc-teren-box">
+                        <!-- toggle pogodak/promašaj -->
+                        <div class="unos-toggle">
+                            <button class="toggle-btn" [class.aktivan]="unosPogodak"
+                                (click)="unosPogodak = true">Pogodak</button>
+                            <button class="toggle-btn miss" [class.aktivan]="!unosPogodak"
+                                (click)="unosPogodak = false">Promašaj</button>
+                        </div>
+
+                        <svg viewBox="0 0 560 560" class="sc-teren" (click)="klikNaTeren($event)" #terenSvg>
+                            <!-- pozadina parketa -->
+                            <rect x="10" y="10" width="540" height="540" rx="8" fill="#3a3a3a" />
+
+                            <!-- linije terena -->
+                            <!-- tabla i koš (koš na 280,75) -->
+                            <line x1="255" y1="40" x2="305" y2="40" stroke="#d4af37" stroke-width="4" />
+                            <circle cx="280" cy="55" r="14" fill="none" stroke="#d4af37" stroke-width="2.5" />
+
+                            <!-- reket -->
+                            <rect x="220" y="10" width="120" height="150" fill="none" stroke="#d4af37"
+                                stroke-width="1.5" />
+                            <!-- krug slobodnih bacanja -->
+                            <circle cx="280" cy="160" r="60" fill="none" stroke="#d4af37" stroke-width="1.5" />
+
+                            <!-- luk za tri sa RAVNIM ćoškovima -->
+                            <path d="M 40 10 L 40 130 A 220 220 0 0 0 520 130 L 520 10" fill="none" stroke="#d4af37"
+                                stroke-width="2.5" />
+
+                            <!-- linije koje razdvajaju sektore (opciono, vizuelna pomoć) -->
+                            <!-- možeš dodati linije iz koša ka ivicama za 45° i centar granice -->
+
+                            <!-- PLOČICE sa procentom po zonama -->
+                            <g *ngFor="let z of zone">
+                                <rect [attr.x]="z.ploX - 23" [attr.y]="z.ploY - 22" width="46" height="20" rx="3"
+                                    [attr.fill]="bojaPlocice(z.id)" stroke="#999" stroke-width="0.5" />
+                                <text [attr.x]="z.ploX" [attr.y]="z.ploY - 8" text-anchor="middle" font-size="11"
+                                    font-weight="600" fill="#222">
+                                    {{ zoneStat[z.id]?.pogodjeni ?? 0 }}/{{ zoneStat[z.id]?.ukupno ?? 0 }}
+                                </text>
+                                <rect [attr.x]="z.ploX - 23" [attr.y]="z.ploY" width="46" height="18" rx="3"
+                                    [attr.fill]="bojaPlocice(z.id)" stroke="#999" stroke-width="0.5" />
+                                <text [attr.x]="z.ploX" [attr.y]="z.ploY + 13" text-anchor="middle" font-size="10"
+                                    fill="#444">
+                                    {{ (zoneStat[z.id]?.procenat ?? 0).toFixed(0) }}%
+                                </text>
+                            </g>
+
+                            <!-- tačke šuteva (klik briše) -->
+                            <circle *ngFor="let s of sutevi" [attr.cx]="s.x / 100 * 560" [attr.cy]="s.y / 100 * 560"
+                                r="6" [attr.fill]="s.pogodak ? '#2ecc71' : '#e74c3c'" stroke="#000" stroke-width="0.5"
+                                class="sut-tacka" (click)="obrisiSut(s, $event)">
+                            </circle>
+                        </svg>
+
+                    </div>
+                </div>
+            </div>
+        </main>
+
+    </div>
+
+</body>
+<footer>
+    <div align="left">
+        <img src="bbballstats_logo.png" alt="logo" class="logo-img" />
+    </div>
+    <div align="center">
+        &copy; BBallStats, 2026
+    </div>
+    <div class="footer-contact" align="right">
+        <a href="tel:+381628421563" class="linkButton"> <img src="logoPhone_white.png" alt="logoPhone_white"
+                class="email-icon"> +381628421563 </a> <br>
+        <a href="mailto: bballstatsinfo@gmail.com" class="linkButton"> <img src="logoMail_white.png"
+                alt="logoMail_white" class="email-icon"> bballstatsinfo@gmail.com</a>
+    </div>
+</footer>

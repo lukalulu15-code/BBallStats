@@ -1,0 +1,145 @@
+<div class="forma-wrapper">
+  <!-- lista dodatih igrača -->
+
+
+  <div class="igraci-wrapper">
+    Izaberi igrače za utakmicu (max 12 igraca) {{brojNasihIgraca}}/12
+    <!-- TABELA -->
+    <div class="tabela-wrapper">
+      <table class="tabela">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Ime i prezime</th>
+            <th>Broj</th>
+            <th>Pozicija</th>
+            <th>Akcije</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let igrac of nasiIgraci">
+            <td><img src="{{igrac.slika}}" alt="slika" height="35px" width="auto"></td>
+            <td>{{igrac.ime}} {{igrac.prezime}}</td>
+            <td>{{igrac.broj}}</td>
+            <td>{{igrac.pozicija}}</td>
+            <td class="td-akcije">
+              <button class="btn-akcija profil">Profil</button>
+              <button class="btn-akcija obrisi" (click)="obrisi(igrac.korisnickoIme)">Izbaci</button>
+            </td>
+          </tr>
+          <tr *ngIf="nasiIgraci.length === 0">
+            <td colspan="5" class="td-prazno">Nema igrača</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- forma za dodavanje -->
+  <div class="login-container">
+    <div class="login-box">
+      <!-- Logotip ili Naziv aplikacije -->
+      <div class="login-header" align="center">
+        <span><img src="bbballstats_logo.png" alt="logo" class="logo-img-login"></span> <br>
+        <span>Dodavanje igraca protivnicke ekipe</span>
+      </div>
+
+      <div class="login-form">
+        <div class="input-group">
+          <input type="text" id="imeProtivnicki" required placeholder=" " [(ngModel)]="imeProtivnicki">
+          <label>Ime</label>
+          <div class="input-line"></div>
+        </div>
+        <!-- Polje za Lozinku -->
+        <div class="input-group">
+          <input type="text" id="prezimeProtivnicki" required placeholder=" " [(ngModel)]="prezimeProtivnicki">
+          <label>Prezime</label>
+          <div class="input-line"></div>
+        </div>
+        <div class="input-group">
+          <input type="number" id="brojProtivnicki" required placeholder=" " [(ngModel)]="brojProtivnicki">
+          <label>Broj dresa</label>
+          <div class="input-line"></div>
+        </div>
+        <div class="input-group">
+          <select [(ngModel)]="pozicijaProtivnicki" (focus)="selectFokus=true" (blur)="selectFokus=false">
+            <option value="" disabled>Izaberi poziciju igraca</option>
+            <option value="plej">Plej</option>
+            <option value="bek">Bek</option>
+            <option value="krilo">Krilo</option>
+            <option value="krilni centar">Krilni centar</option>
+            <option value="centar">Centar</option>
+          </select>
+          <label class="select-label" [style.color]="selectFokus ? '#00d2ff' : '#e74c3c'"
+            [style.color]="pozicijaProtivnicki!='' ? '#00d2ff' : '#e74c3c'">Pozicija</label>
+          <div class="input-line"></div>
+        </div>
+        <!-- Dugme za prijavu -->
+        <div align="center">
+          <button (click)="dodajProtivnickog()">Dodaj novog igraca</button>
+        </div>
+        <br>
+        <div align="center" class="message">{{message}}</div>
+      </div>
+    </div>
+  </div>
+  <span class="error" *ngIf="greska">{{ greska }}</span>
+  <div class="message" *ngIf="poruka">{{ poruka }}</div>
+</div>
+<div class="igraci-wrapper">
+  <div align="center">Protivnicka ekipa, {{protivnik}}, spisak igraca ({{protivnickiIgraci.length}}/12)</div>
+  <div class="tabela-wrapper-protivnik">
+    <table class="tabela-protivnik">
+      <thead>
+        <tr>
+          <th>Ime i prezime</th>
+          <th>Broj</th>
+          <th>Pozicija</th>
+          <th>Akcije</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let igrac of protivnickiIgraci">
+          <td *ngIf="igrac.id!=protivnikIdUredi">{{igrac.ime}} {{igrac.prezime}}</td>
+          <td *ngIf="igrac.id!=protivnikIdUredi" >{{igrac.broj}}</td>
+          <td *ngIf="igrac.id!=protivnikIdUredi">{{igrac.pozicija}}</td>
+          <td class="td-akcije" *ngIf="igrac.id!=protivnikIdUredi">
+            <button class="btn-akcija obrisi" (click)="obrisiProtivnickog(igrac.id)">Obriši</button>
+             <button class="btn-akcija profil" (click)="urediProtivnickog(igrac.id)">Uredi</button>
+          </td>
+          <td *ngIf="igrac.id==protivnikIdUredi"><input type="text" [(ngModel)]="protivnikImeUredi"> <input
+                type="text" [(ngModel)]="protivnikPrezimeUredi"></td>
+          <td *ngIf="igrac.id==protivnikIdUredi" ><input type="number" [(ngModel)]="protivnikBrojUredi"></td>
+          <td *ngIf="igrac.id==protivnikIdUredi">
+            <select [(ngModel)]="protivnikPozicijaUredi">
+                <option value="" disabled>Izaberi</option>
+                <option value="plej">Plej</option>
+                <option value="bek">Bek</option>
+                <option value="krilo">Krilo</option>
+                <option value="krilni centar">Krilni centar</option>
+                <option value="centar">Centar</option>
+              </select>
+          </td>
+          <td class="td-akcije" *ngIf="igrac.id==protivnikIdUredi">
+            <button class="btn-akcija potvrdi" (click)="izmeniProtivnikcog(igrac.id)">Potvrdi</button>
+            <button class="btn-akcija obrisi" (click)="odustani()">Odustani</button>
+          </td>
+        </tr>
+        <tr *ngIf="nasiIgraci.length === 0">
+          <td colspan="5" class="td-prazno">Nema igrača</td>
+        </tr>
+        <tr>
+          <td colspan="3"></td>
+          <td class="td-akcije">
+            <button class="button-tabela" (click)="predjiNaUtakmicu()">Pređi na utakmicu</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <br><br>
+</div>
+
+
+
+<router-outlet></router-outlet>

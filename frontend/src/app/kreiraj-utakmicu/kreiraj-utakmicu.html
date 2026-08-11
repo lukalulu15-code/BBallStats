@@ -1,0 +1,90 @@
+<body>
+    <!-- Navigacioni meni -->
+    <header>
+        <img src="bbballstats_logo.png" alt="logo" class="logo-img" />
+        <div align="right">
+            <a (click)="trenerPocetna()" class="linkButton">Početna</a>
+            <a (click)="logOut()" class="linkButton">Odjavi se</a>
+        </div>
+    </header>
+
+    <!-- Glavni sadržaj -->
+    <div class="app-wrapper">
+
+    <main class="app-content">
+    <div class="forma-wrapper">
+        <h2 class="forma-title">Nova utakmica</h2>
+
+        <div class="form-group">
+            <label>Protivnički tim</label>
+            <input type="text" [(ngModel)]="protivnik" placeholder="Naziv tima" />
+            <span class="error" *ngIf="greske['protivnik']">Obavezno polje</span>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>Datum</label>
+                <input type="date" [(ngModel)]="datum" name="datum" />
+                <span class="error" *ngIf="greske['datum']">Obavezno polje</span>
+            </div>
+            <div class="form-group">
+                <label>Vreme</label>
+                <input type="time" [(ngModel)]="vreme" name="vreme"/>
+                <span class="error" *ngIf="greske['vreme']">Obavezno polje</span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Mesto</label>
+            <div class="radio-group">
+                <label class="radio-label">
+                    <input type="radio" [(ngModel)]="mesto" value="domacin" /> Domaćin
+                </label>
+                <label class="radio-label">
+                    <input type="radio" [(ngModel)]="mesto" value="gost" /> Gost
+                </label>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Takmičenje</label>
+            <select [(ngModel)]="takmicenje">
+                <option value="" disabled>Izaberi takmičenje</option>
+                <option value="liga">Liga</option>
+                <option value="prijateljska">Prijateljska utakmica</option>
+            </select>
+            <span class="error" *ngIf="greske['takmicenje']">Obavezno polje</span>
+        </div>
+
+        <div class="form-group">
+            <label>Napomena <span class="optional">(opciono)</span></label>
+            <textarea [(ngModel)]="napomena" placeholder="Dodatne informacije..." rows="3"></textarea>
+        </div>
+
+        <div class="form-actions">
+            <button type="button" class="btn-cancel" (click)="otkazi()">Otkaži</button>
+            <button type="button" class="btn-submit" (click)="kreirajUtakmicu()">Kreiraj utakmicu</button>
+        </div>
+
+    </div>
+    </main>
+
+    </div>
+
+</body>
+<footer>
+    <div align="left">
+        <img src="bbballstats_logo.png" alt="logo" class="logo-img" />
+    </div>
+    <div align="center">
+        &copy; BBallStats, 2026
+    </div>
+    <div class="footer-contact" align="right">
+        <a href="tel:+381628421563" class="linkButton"> <img src="logoPhone_white.png" alt="logoPhone_white"
+                class="email-icon"> +381628421563 </a> <br>
+        <a href="mailto: bballstatsinfo@gmail.com" class="linkButton"> <img src="logoMail_white.png"
+                alt="logoMail_white" class="email-icon"> bballstatsinfo@gmail.com</a>
+    </div>
+</footer>
+
+<router-outlet></router-outlet>

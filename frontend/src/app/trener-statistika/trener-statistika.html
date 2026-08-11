@@ -1,0 +1,340 @@
+﻿<body>
+  <!-- Navigacioni meni -->
+  <header>
+    <img src="bbballstats_logo.png" alt="logo" class="logo-img" />
+    <div align="right">
+      <a (click)="trenerPocetna()" class="linkButton">Početna</a>
+      <a (click)="logOut()" class="linkButton">Odjavi se</a>
+    </div>
+  </header>
+
+  <div class="app-wrapper">
+
+  <main class="app-content">
+  <div class="sezona-izbor">
+    <label>Sezona:</label>
+    <select [(ngModel)]="izabranaSezona" (change)="promeniIzbor()" class="sezona-select">
+      <option *ngFor="let s of sezone" [ngValue]="s">
+        {{ s }}/{{ s + 1 }}
+      </option>
+      <option [ngValue]="-1">
+        Ukupno
+      </option>
+    </select>
+    <label>Tip:</label>
+    <select [(ngModel)]="izabraniTip" (change)="promeniIzbor()" class="sezona-select">
+      <option [ngValue]="'sve'">Sve</option>
+      <option [ngValue]="'liga'">Liga</option>
+      <option [ngValue]="'prijateljska'">Prijateljska</option>
+    </select>
+  </div>
+  <div class="statistika-wrapper" *ngIf="izabranaSezona==-1">
+    <div class="sekcija-naslov">Timski proseci ukupno · {{ klub }}</div>
+    <div class="proseci-grid">
+      <div class="prosek-kartica">
+        <div class="prosek-label">Pts</div>
+        <div class="prosek-vrednost istaknuto">{{ prosekPoenaTim.toFixed(1) }}</div>
+      </div>
+      <div class="prosek-kartica">
+        <div class="prosek-label">Reb</div>
+        <div class="prosek-vrednost">{{ prosekSkokovaTim.toFixed(1) }}</div>
+      </div>
+      <div class="prosek-kartica">
+        <div class="prosek-label">Ast.</div>
+        <div class="prosek-vrednost">{{ prosekAsistencijaTim.toFixed(1) }}</div>
+      </div>
+      <div class="prosek-kartica">
+        <div class="prosek-label">Stl</div>
+        <div class="prosek-vrednost">{{ prosekUkradeneTim.toFixed(1) }}</div>
+      </div>
+      <div class="prosek-kartica">
+        <div class="prosek-label">Blk</div>
+        <div class="prosek-vrednost">{{ prosekBlokadeTim.toFixed(1) }}</div>
+      </div>
+    </div>
+
+    <div class="sekcija-naslov">Protivnici proseci</div>
+    <div class="proseci-grid">
+      <div class="prosek-kartica">
+        <div class="prosek-label">Pts</div>
+        <div class="prosek-vrednost istaknuto">{{ prosekPoenaTimProtivnik.toFixed(1) }}</div>
+      </div>
+      <div class="prosek-kartica">
+        <div class="prosek-label">Reb</div>
+        <div class="prosek-vrednost">{{ prosekSkokovaTimProtivnik.toFixed(1) }}</div>
+      </div>
+      <div class="prosek-kartica">
+        <div class="prosek-label">Ast.</div>
+        <div class="prosek-vrednost">{{ prosekAsistencijaTimProtivnik.toFixed(1) }}</div>
+      </div>
+      <div class="prosek-kartica">
+        <div class="prosek-label">Stl</div>
+        <div class="prosek-vrednost">{{ prosekUkradeneTimProtivnik.toFixed(1) }}</div>
+      </div>
+      <div class="prosek-kartica">
+        <div class="prosek-label">Blk</div>
+        <div class="prosek-vrednost">{{ prosekBlokadeTimProtivnik.toFixed(1) }}</div>
+      </div>
+    </div>
+
+    <div class="sekcija-naslov">Poređenje sa protivnicima</div>
+    <div class="grafikon-wrapper">
+      <canvas #poredjenjeChart></canvas>
+    </div>
+
+    <div class="sekcija-naslov">Proseci igrača</div>
+    <div class="hint">Klikni na zaglavlje kolone za sortiranje</div>
+
+    <table class="stat-tabela">
+      <thead>
+        <tr>
+          <th (click)="sortiraj('broj')" class="sortabilno">Igrač</th>
+          <th (click)="sortiraj('utakmica')" class="sortabilno centar">
+            UT {{ sortKolona === 'utakmica' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+          </th>
+          <th (click)="sortiraj('starter')" class="sortabilno centar">
+            UTS {{ sortKolona === 'starter' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+          </th>
+          <th (click)="sortiraj('minuti')" class="sortabilno centar">
+            MIN {{ sortKolona === 'minuti' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+          </th>
+          <th (click)="sortiraj('poeni')" class="sortabilno centar">
+            PTS {{ sortKolona === 'poeni' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+          </th>
+          <th (click)="sortiraj('dvaProcenat')" class="sortabilno centar">
+            2FG% {{ sortKolona === 'dvaProcenat' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+          </th>
+          <th (click)="sortiraj('triProcenat')" class="sortabilno centar">
+            3FG% {{ sortKolona === 'triProcenat' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+          </th>
+          <th (click)="sortiraj('slobodnoProcenat')" class="sortabilno centar">
+            FT% {{ sortKolona === 'slobodnoProcenat' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+          </th>
+          <th (click)="sortiraj('skokovi')" class="sortabilno centar">
+            TR {{ sortKolona === 'skokovi' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+          </th>
+          <th (click)="sortiraj('skokoviNapad')" class="sortabilno centar">
+            OR {{ sortKolona === 'skokoviNapad' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+          </th>
+          <th (click)="sortiraj('skokoviOdbrana')" class="sortabilno centar">
+            DR {{ sortKolona === 'skokoviOdbrana' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+          </th>
+          <th (click)="sortiraj('asistencije')" class="sortabilno centar">
+            AST {{ sortKolona === 'asistencije' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+          </th>
+          <th (click)="sortiraj('ukradene')" class="sortabilno centar">
+            STL {{ sortKolona === 'ukradene' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+          </th>
+          <th (click)="sortiraj('blokade')" class="sortabilno centar">
+            BLK {{ sortKolona === 'blokade' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+          </th>
+          <th (click)="sortiraj('blokadePrimljene')" class="sortabilno centar">
+            BLKA {{ sortKolona === 'blokadePrimljene' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+          </th>
+          <th (click)="sortiraj('izgubljene')" class="sortabilno centar">
+            TOV {{ sortKolona === 'izgubljene' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+          </th>
+          <th (click)="sortiraj('licneGreske')" class="sortabilno centar">
+            FC {{ sortKolona === 'licneGreske' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+          </th>
+          <th (click)="sortiraj('iznudjeniFaulovi')" class="sortabilno centar">
+            FD {{ sortKolona === 'iznudjeniFaulovi' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+          </th>
+          <th (click)="sortiraj('indeks')" class="sortabilno centar">
+            PIR {{ sortKolona === 'indeks' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let ig of igraciProseci">
+          <td (click)="otvoriProfil(ig.igrac.korisnickoIme)" class="igrac-link">
+            {{ ig.igrac.broj }} {{ ig.igrac.ime[0] }}.{{ ig.igrac.prezime }}
+          </td>
+          <td class="centar">{{ ig.brojUtakmica }}</td>
+          <td class="centar">{{ ig.startovaoUtakmica }}</td>
+          <td class="centar">{{ formatMinute(ig.prosekMinutaSek) }}</td>
+          <td class="centar istaknuto">{{ ig.prosekPoena.toFixed(1) }}</td>
+          <td class="centar">{{ ig.prosekDvaPoena.toFixed(1) }}%</td>
+          <td class="centar">{{ ig.prosekTriPoena.toFixed(1) }}%</td>
+          <td class="centar">{{ ig.prosekSlobodno.toFixed(1) }}%</td>
+          <td class="centar">{{ ig.prosekSkokova.toFixed(1) }}</td>
+          <td class="centar">{{ ig.prosekSkokoviNapad.toFixed(1) }}</td>
+          <td class="centar">{{ ig.prosekSkokoviOdbrana.toFixed(1) }}</td>
+          <td class="centar">{{ ig.prosekAsistencija.toFixed(1) }}</td>
+          <td class="centar">{{ ig.prosekUkradene.toFixed(1) }}</td>
+          <td class="centar">{{ ig.prosekBlokade.toFixed(1) }}</td>
+          <td class="centar">{{ ig.prosekBlokadePrimljene.toFixed(1) }}</td>
+          <td class="centar">{{ ig.prosekIzgubljene.toFixed(1) }}</td>
+          <td class="centar">{{ ig.prosekLicneGreske.toFixed(1) }}</td>
+          <td class="centar">{{ ig.prosekIznudjeniFaulovi.toFixed(1) }}</td>
+          <td class="centar">{{ ig.prosekIndeksa.toFixed(1) }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+
+  <div class="statistika-wrapper" *ngIf="izabranaSezona>-1">
+    <div class="sekcija-naslov">Timski proseci sezona {{izabranaSezona}}/{{izabranaSezona+1}} · {{ klub }}</div>
+    <div class="proseci-grid">
+      <div class="prosek-kartica">
+        <div class="prosek-label">Pts</div>
+        <div class="prosek-vrednost istaknuto">{{ prosekPoenaTimSezona.toFixed(1) }}</div>
+      </div>
+      <div class="prosek-kartica">
+        <div class="prosek-label">Reb</div>
+        <div class="prosek-vrednost">{{ prosekSkokovaTimSezona.toFixed(1) }}</div>
+      </div>
+      <div class="prosek-kartica">
+        <div class="prosek-label">Ast.</div>
+        <div class="prosek-vrednost">{{ prosekAsistencijaTimSezona.toFixed(1) }}</div>
+      </div>
+      <div class="prosek-kartica">
+        <div class="prosek-label">Stl</div>
+        <div class="prosek-vrednost">{{ prosekUkradeneTimSezona.toFixed(1) }}</div>
+      </div>
+      <div class="prosek-kartica">
+        <div class="prosek-label">Blk</div>
+        <div class="prosek-vrednost">{{ prosekBlokadeTimSezona.toFixed(1) }}</div>
+      </div>
+    </div>
+
+    <div class="sekcija-naslov">Protivnici proseci</div>
+    <div class="proseci-grid">
+      <div class="prosek-kartica">
+        <div class="prosek-label">Pts</div>
+        <div class="prosek-vrednost istaknuto">{{ prosekPoenaTimProtivnikSezona.toFixed(1) }}</div>
+      </div>
+      <div class="prosek-kartica">
+        <div class="prosek-label">Reb</div>
+        <div class="prosek-vrednost">{{ prosekSkokovaTimProtivnikSezona.toFixed(1) }}</div>
+      </div>
+      <div class="prosek-kartica">
+        <div class="prosek-label">Ast.</div>
+        <div class="prosek-vrednost">{{ prosekAsistencijaTimProtivnikSezona.toFixed(1) }}</div>
+      </div>
+      <div class="prosek-kartica">
+        <div class="prosek-label">Stl</div>
+        <div class="prosek-vrednost">{{ prosekUkradeneTimProtivnikSezona.toFixed(1) }}</div>
+      </div>
+      <div class="prosek-kartica">
+        <div class="prosek-label">Blk</div>
+        <div class="prosek-vrednost">{{ prosekBlokadeTimProtivnikSezona.toFixed(1) }}</div>
+      </div>
+    </div>
+
+    <div class="sekcija-naslov">Poređenje sa protivnicima</div>
+    <div class="grafikon-wrapper">
+      <canvas #poredjenjeChartSezona></canvas>
+    </div>
+
+    <div class="sekcija-naslov">Proseci igrača</div>
+    <div class="hint">Klikni na zaglavlje kolone za sortiranje</div>
+
+    <table class="stat-tabela">
+      <thead>
+        <tr>
+          <th (click)="sortiraj('broj')" class="sortabilno">Igrač</th>
+          <th (click)="sortiraj('utakmica')" class="sortabilno centar">
+            UT {{ sortKolona === 'utakmica' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+          </th>
+          <th (click)="sortiraj('starter')" class="sortabilno centar">
+            UTS {{ sortKolona === 'starter' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+          </th>
+          <th (click)="sortiraj('minuti')" class="sortabilno centar">
+            MIN {{ sortKolona === 'minuti' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+          </th>
+          <th (click)="sortiraj('poeni')" class="sortabilno centar">
+            PTS {{ sortKolona === 'poeni' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+          </th>
+          <th (click)="sortiraj('dvaProcenat')" class="sortabilno centar">
+            2FG% {{ sortKolona === 'dvaProcenat' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+          </th>
+          <th (click)="sortiraj('triProcenat')" class="sortabilno centar">
+            3FG% {{ sortKolona === 'triProcenat' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+          </th>
+          <th (click)="sortiraj('slobodnoProcenat')" class="sortabilno centar">
+            FT% {{ sortKolona === 'slobodnoProcenat' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+          </th>
+          <th (click)="sortiraj('skokovi')" class="sortabilno centar">
+            TR {{ sortKolona === 'skokovi' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+          </th>
+          <th (click)="sortiraj('skokoviNapad')" class="sortabilno centar">
+            OR {{ sortKolona === 'skokoviNapad' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+          </th>
+          <th (click)="sortiraj('skokoviOdbrana')" class="sortabilno centar">
+            DR {{ sortKolona === 'skokoviOdbrana' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+          </th>
+          <th (click)="sortiraj('asistencije')" class="sortabilno centar">
+            AST {{ sortKolona === 'asistencije' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+          </th>
+          <th (click)="sortiraj('ukradene')" class="sortabilno centar">
+            STL {{ sortKolona === 'ukradene' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+          </th>
+          <th (click)="sortiraj('blokade')" class="sortabilno centar">
+            BLK {{ sortKolona === 'blokade' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+          </th>
+          <th (click)="sortiraj('blokadePrimljene')" class="sortabilno centar">
+            BLKA {{ sortKolona === 'blokadePrimljene' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+          </th>
+          <th (click)="sortiraj('izgubljene')" class="sortabilno centar">
+            TOV {{ sortKolona === 'izgubljene' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+          </th>
+          <th (click)="sortiraj('licneGreske')" class="sortabilno centar">
+            FC {{ sortKolona === 'licneGreske' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+          </th>
+          <th (click)="sortiraj('iznudjeniFaulovi')" class="sortabilno centar">
+            FD {{ sortKolona === 'iznudjeniFaulovi' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+          </th>
+          <th (click)="sortiraj('indeks')" class="sortabilno centar">
+            PIR {{ sortKolona === 'indeks' ? (sortSmer === 'desc' ? '▼' : '▲') : '' }}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let ig of igraciProseciSezona">
+          <td (click)="otvoriProfil(ig.igrac.korisnickoIme)" class="igrac-link">
+            {{ ig.igrac.broj }} {{ ig.igrac.ime[0] }}.{{ ig.igrac.prezime }}
+          </td>
+          <td class="centar">{{ ig.brojUtakmica }}</td>
+          <td class="centar">{{ ig.startovaoUtakmica }}</td>
+          <td class="centar">{{ formatMinute(ig.prosekMinutaSek) }}</td>
+          <td class="centar istaknuto">{{ ig.prosekPoena.toFixed(1) }}</td>
+          <td class="centar">{{ ig.prosekDvaPoena.toFixed(1) }}%</td>
+          <td class="centar">{{ ig.prosekTriPoena.toFixed(1) }}%</td>
+          <td class="centar">{{ ig.prosekSlobodno.toFixed(1) }}%</td>
+          <td class="centar">{{ ig.prosekSkokova.toFixed(1) }}</td>
+          <td class="centar">{{ ig.prosekSkokoviNapad.toFixed(1) }}</td>
+          <td class="centar">{{ ig.prosekSkokoviOdbrana.toFixed(1) }}</td>
+          <td class="centar">{{ ig.prosekAsistencija.toFixed(1) }}</td>
+          <td class="centar">{{ ig.prosekUkradene.toFixed(1) }}</td>
+          <td class="centar">{{ ig.prosekBlokade.toFixed(1) }}</td>
+          <td class="centar">{{ ig.prosekBlokadePrimljene.toFixed(1) }}</td>
+          <td class="centar">{{ ig.prosekIzgubljene.toFixed(1) }}</td>
+          <td class="centar">{{ ig.prosekLicneGreske.toFixed(1) }}</td>
+          <td class="centar">{{ ig.prosekIznudjeniFaulovi.toFixed(1) }}</td>
+          <td class="centar">{{ ig.prosekIndeksa.toFixed(1) }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+  </main>
+
+  </div>
+
+</body>
+<footer>
+  <div align="left">
+    <img src="bbballstats_logo.png" alt="logo" class="logo-img" />
+  </div>
+  <div align="center">
+    &copy; BBallStats, 2026
+  </div>
+  <div class="footer-contact" align="right">
+    <a href="tel:+381628421563" class="linkButton"> <img src="logoPhone_white.png" alt="logoPhone_white"
+        class="email-icon"> +381628421563 </a> <br>
+    <a href="mailto: bballstatsinfo@gmail.com" class="linkButton"> <img src="logoMail_white.png" alt="logoMail_white"
+        class="email-icon"> bballstatsinfo@gmail.com</a>
+  </div>
+</footer>

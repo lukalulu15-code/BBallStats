@@ -1,0 +1,121 @@
+<body>
+  <!-- Navigacioni meni -->
+  <header>
+    <img src="bbballstats_logo.png" alt="logo" class="logo-img" />
+    <div align="right">
+      <a (click)="pocetna()" class="linkButton">Početna</a>
+      <a (click)="registrationForm()" class="linkButton">Registruj se</a>
+    </div>
+  </header>
+  <div id="initial-loader">
+    <img src="bbballstats_logo.png" class="loader-logo" alt="Logo" />
+  </div>
+  <!-- Glavni sadržaj -->
+  <div class="app-wrapper">
+
+  <main class="app-content">
+  <div *ngIf="!otvoriB" class="login-container">
+    <div class="login-box">
+      <!-- Logotip ili Naziv aplikacije -->
+      <div class="login-header" align="center">
+        <span><img src="bbballstats_logo.png" alt="logo" class="logo-img-login"></span>
+      </div>
+
+      <!-- Forma -->
+      <div class="login-form">
+        <!-- Polje za Email -->
+        <div class="input-group">
+          <input type="text" id="korisnickoIme" required placeholder=" " [(ngModel)]="korisnickoIme">
+          <label for="korisnickoIme">Korisničko ime</label>
+          <div class="input-line"></div>
+        </div>
+
+        <!-- Polje za Lozinku -->
+        <div class="input-group">
+          <input type="password" id="password" required placeholder=" " [(ngModel)]="lozinkaT">
+          <label for="password">Lozinka</label>
+          <div class="input-line"></div>
+        </div>
+
+        <div class="radio-grupa">
+          <span class="radio-naslov">Prijavi se kao:</span>
+          <div class="radio-opcije">
+            <label class="radio-opcija">
+              <input type="radio" name="tipKorisnika" value="igrac" [(ngModel)]="tipKorisnika">
+              <span>Igrač</span>
+            </label>
+            <label class="radio-opcija">
+              <input type="radio" name="tipKorisnika" value="trener" [(ngModel)]="tipKorisnika">
+              <span>Trener</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Zaboravljena lozinka -->
+        <div class="form-actions">
+          <a (click)="otvori()" class="linkButtonLogin">Zaboravili ste lozinku?</a>
+        </div>
+        <!-- Dugme za prijavu -->
+        <div align="center">
+          <button (click)="login()">Prijavi se</button>
+        </div>
+
+        <!-- Link za registraciju -->
+        <div align="center">
+          <p>Nemate nalog? <a href="registration-stranica" class="linkButtonLogin">Registrujte se</a></p>
+        </div>
+        <div align="center" class="message">{{message}}</div>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="otvoriB" class="zaboravio-container">
+    <div class="login-box">
+      <div class="login-form">
+        <h2>Zaboravili ste lozinku? <br><br></h2>
+        <div class="input-group">
+          <input type="text" placeholder=" " [(ngModel)]="email" />
+          <label>Email</label>
+          <div class="input-line"></div>
+        </div>
+        <div class="radio-grupa">
+          <span class="radio-naslov">Tip korisnika:</span>
+          <div class="radio-opcije">
+            <label class="radio-opcija">
+              <input type="radio" name="tipKorisnikaLoz" value="igrac" [(ngModel)]="tipKorisnikaLoz">
+              <span>Igrač</span>
+            </label>
+            <label class="radio-opcija">
+              <input type="radio" name="tipKorisnikaLoz" value="trener" [(ngModel)]="tipKorisnikaLoz">
+              <span>Trener</span>
+            </label>
+          </div>
+        </div>
+        <div class="form-actions">
+          <a (click)="vratiLogin()" class="linkButtonLogin">Prijavi se</a>
+        </div>
+        <button (click)="posaljiZahtev()">Pošalji link</button>
+        <div class="message">{{ poruka }}</div>
+      </div>
+    </div>
+  </div>
+  </main>
+
+  </div>
+
+</body>
+<footer>
+  <div align="left">
+    <img src="bbballstats_logo.png" alt="logo" class="logo-img" />
+  </div>
+  <div align="center">
+    &copy; BBallStats, 2026
+  </div>
+  <div class="footer-contact">
+    <a href="tel:+381637348678" class="linkButton"> <img src="logoPhone_white.png" alt="logoPhone_white"
+        class="email-icon"> +381628421563 </a> <br>
+    <a href="mailto:gumaplast@gmail.com" class="linkButton"> <img src="logoMail_white.png" alt="logoMail_white"
+        class="email-icon"> bballstatsinfo@gmail.com</a>
+  </div>
+</footer>
+
+<router-outlet></router-outlet>

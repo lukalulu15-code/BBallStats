@@ -1,0 +1,9 @@
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;   /* bar visina ekrana */
+}
+
+.app-sadrzaj {
+  flex: 1;   /* zauzme sav slobodan prostor, gura footer na dno */
+}

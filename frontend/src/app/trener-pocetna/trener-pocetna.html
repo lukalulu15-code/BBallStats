@@ -1,0 +1,137 @@
+<body *ngIf="korisnickoImeTrenera!=null">
+  <!-- Navigacioni meni -->
+  <header>
+    <img src="bbballstats_logo.png" alt="logo" class="logo-img" />
+    <div align="right">
+      <a (click)="logOut()" class="linkButton">Odjavi se</a>
+    </div>
+  </header>
+  <div class="app-wrapper">
+    <!-- Glavni sadržaj -->
+    <router-outlet></router-outlet>
+    <main class="app-content">
+    <div class="dashboard">
+
+      <div class="welcome">
+        <p>Dobrodošao nazad,</p>
+        <h2>{{trener.ime}} {{trener.prezime}}</h2>
+        <img src="{{trener.slika}}" alt="profilna" height="60px" width="auto">
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat">
+          <p class="stat-label">Igrači</p>
+          <p class="stat-value">{{brojIgraca}}</p>
+        </div>
+        <div class="stat">
+          <p class="stat-label">Utakmice</p>
+          <p class="stat-value">{{brojOdigranih}}</p>
+        </div>
+        <div class="stat">
+          <p class="stat-label">Pobede</p>
+          <p class="stat-value">{{brojPobeda}}</p>
+        </div>
+        <div *ngIf="sledecaUtakmica!=null" class="stat">
+          <p class="stat-label">Sledeća utakmica</p>
+          <p class="stat-value">{{sledecaUtakmica.datum | date:'dd.MM'}}</p>
+          <p class="stat-sub" *ngIf="gostujemo==false">vs {{naredniProtivnik}}</p>
+          <p class="stat-sub" *ngIf="gostujemo==true">at {{naredniProtivnik}}</p>
+        </div>
+        <div *ngIf="sledecaUtakmica==null" class="stat">
+          <p class="stat-label">Sledeća utakmica</p>
+          <p>Nema zakazanih utakmica</p>
+        </div>
+      </div>
+      <div class="actions-grid">
+        <div class="action-card" (click)="goToKreirajUtakmicu()">
+          <span class="action-icon">🏀</span>
+          <p class="action-title">Nova utakmica</p>
+        </div>
+        <div class="action-card" (click)="goToTrenerIgraci()">
+          <span class="action-icon">👥</span>
+          <p class="action-title">Igrači</p>
+        </div>
+        <div class="action-card" (click)="goToTrenerStatistika()">
+          <span class="action-icon">📊</span>
+          <p class="action-title">Statistika</p>
+        </div>
+        <div class="action-card" (click)="goToPregledUtakmica()">
+          <span class="action-icon">📋</span>
+          <p class="action-title">Utakmice</p>
+        </div>
+        <div class="action-card" (click)="goToProfil()">
+          <span class="action-icon">👤</span>
+          <div class="action-title">Moj profil</div>
+        </div>
+        <div class="action-card" (click)="goToShootingChart()">
+          <span class="action-icon">🎯</span>
+          <div class="action-title">Shooting chart</div>
+        </div>
+      </div>
+
+      <div class="sekcija-naslov">Današnje utakmice</div>
+      <div class="match-list">
+        <div class="match-row" *ngFor="let u of utakmiceDanas">
+          <div>
+            <p class="match-teams">{{ u.domacin }} vs {{ u.gost }}</p>
+            <p class="match-meta">{{ u.datum | date:'dd.MM.yyyy' }} · {{ u.takmicenje }}</p>
+          </div>
+          <div class="utakmica-akcije">
+            <button class="btn-uredi" (click)="zapocniUtakmicu(u)">Započni</button>
+            <button class="btn-obrisi" (click)="otkaziUtakmicu(u.id)">Otkaži</button>
+          </div>
+        </div>
+        <div class="match-row-empty" *ngIf="utakmiceDanas.length==0">
+          Danas nema zakazanih utakmica
+        </div>
+      </div>
+
+      <div class="sekcija-naslov">Prethodne utakmice</div>
+      <div class="match-list">
+        <div class="match-row" *ngFor="let u of utakmiceProslost">
+          <div>
+            <p class="match-teams">{{ u.domacin }} vs {{ u.gost }}</p>
+            <p class="match-meta">{{ u.datum | date:'dd.MM.yyyy' }} · {{ u.takmicenje }}</p>
+          </div>
+          <div class="utakmica-akcije">
+            <button class="btn-uredi" (click)="urediUtakmicu(u)">Uredi</button>
+          </div>
+        </div>
+        <div class="match-row-empty" *ngIf="utakmiceProslost.length==0">
+          Nema prethodnih utakmica
+        </div>
+      </div>
+
+      <div class="sekcija-naslov">Naredne utakmice</div>
+      <div class="match-list">
+        <div class="match-row" *ngFor="let u of utakmiceBuducnost">
+          <div>
+            <p class="match-teams">{{ u.domacin }} vs {{ u.gost }}</p>
+            <p class="match-meta">{{ u.datum | date:'dd.MM.yyyy' }} · {{ u.takmicenje }}</p>
+          </div>
+          <div class="utakmica-akcije">
+            <button class="btn-obrisi" (click)="otkaziUtakmicu(u.id)">Otkaži</button>
+          </div>
+        </div>
+        <div class="match-row-empty" *ngIf="utakmiceBuducnost.length==0">
+          Nema narednih utakmica
+        </div>
+      </div>
+    </div>
+    </main>
+  </div>
+</body>
+<footer *ngIf="korisnickoImeTrenera!=null">
+  <div align="left">
+    <img src="bbballstats_logo.png" alt="logo" class="logo-img" />
+  </div>
+  <div align="center">
+    &copy; BBallStats, 2026
+  </div>
+  <div class="footer-contact">
+    <a href="tel:+381628421563" class="linkButton"> <img src="logoPhone_white.png" alt="logoPhone_white"
+        class="email-icon"> +381628421563 </a> <br>
+    <a href="mailto: bballstatsinfo@gmail.com" class="linkButton"> <img src="logoMail_white.png" alt="logoMail_white"
+        class="email-icon"> bballstatsinfo@gmail.com</a>
+  </div>
+</footer>

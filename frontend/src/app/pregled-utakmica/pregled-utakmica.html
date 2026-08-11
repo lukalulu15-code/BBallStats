@@ -1,0 +1,122 @@
+<body>
+  <!-- Navigacioni meni -->
+  <header>
+    <img src="bbballstats_logo.png" alt="logo" class="logo-img" />
+    <div align="right">
+      <a (click)="trenerPocetna()" class="linkButton">Početna</a>
+      <a (click)="logOut()" class="linkButton">Odjavi se</a>
+    </div>
+  </header>
+
+
+
+  <div class="app-wrapper">
+
+    <main class="app-content">
+      <div class="pregled-wrapper">
+        <h2 class="naslov">Utakmice</h2>
+
+    <div class="sezona-izbor">
+      <label>Sezona:</label>
+      <select [(ngModel)]="izabranaSezona" (change)="promeniSezonu()" class="sezona-select">
+        <option *ngFor="let s of sezone" [ngValue]="s">
+          {{ s }}/{{ s + 1 }}
+        </option>
+        <option [ngValue]="-1">
+          Ukupno
+        </option>
+      </select>
+    </div>
+
+    <div class="prazno-kartica" *ngIf="ligaUtakmice.length === 0 && kupUtakmice.length === 0 && prijateljskeUtakmice.length === 0">
+      Ne postoje podaci o utakmicama
+    </div>
+
+    <!-- LIGA -->
+    <div class="grupa" *ngIf="ligaUtakmice.length > 0">
+      <h3 class="grupa-naslov">Liga</h3>
+      <table class="utakmice-tabela">
+        <thead>
+          <tr>
+            <th class="sortabilno" (click)="promeniSortLiga()">Datum <span class="sort-strelica">{{ sortPravacLiga ===
+                'desc' ? '▼' : '▲' }}</span></th>
+            <th>Takmičenje</th>
+            <th>Domaćin</th>
+            <th>Rezultat</th>
+            <th>Gost</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let u of ligaUtakmice">
+            <td>{{ u.datum }}</td>
+            <td>{{ u.takmicenje }}</td>
+            <td>{{ u.domacin }}</td>
+            <td class="rezultat">{{ u.poeniDomacin }} : {{ u.poeniGost }}</td>
+            <td>{{ u.gost }}</td>
+            <td><span *ngIf="u.status!='pobeda' && u.status!='poraz'">{{ u.status }}</span>
+              <span class="pobeda" *ngIf="u.status=='pobeda'">W</span>
+              <span class="poraz" *ngIf="u.status=='poraz'">L</span>
+            </td>
+            <td><button class="btn-pregled" (click)="pregled(u)">Pregled</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+
+    <!-- PRIJATELJSKE -->
+    <div class="grupa" *ngIf="prijateljskeUtakmice.length > 0">
+      <h3 class="grupa-naslov">Prijateljske</h3>
+      <table class="utakmice-tabela">
+        <thead>
+          <tr>
+            <th class="sortabilno" (click)="promeniSortPrijateljske()">Datum <span class="sort-strelica">{{
+                sortPravacPrijateljske === 'desc' ? '▼' : '▲' }}</span></th>
+            <th>Takmičenje</th>
+            <th>Domaćin</th>
+            <th>Rezultat</th>
+            <th>Gost</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let u of prijateljskeUtakmice">
+            <td>{{ u.datum }}</td>
+            <td>{{ u.takmicenje }}</td>
+            <td>{{ u.domacin }}</td>
+            <td class="rezultat">{{ u.poeniDomacin }} : {{ u.poeniGost }}</td>
+            <td>{{ u.gost }}</td>
+            <td><span *ngIf="u.status!='pobeda' && u.status!='poraz'">{{ u.status }}</span>
+              <span class="pobeda" *ngIf="u.status=='pobeda'">W</span>
+              <span class="poraz" *ngIf="u.status=='poraz'">L</span>
+            </td>
+            <td><button class="btn-pregled" (click)="pregled(u)">Pregled</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+      </div>
+    </main>
+
+  </div>
+
+</body>
+<footer>
+  <div align="left">
+    <img src="bbballstats_logo.png" alt="logo" class="logo-img" />
+  </div>
+  <div align="center">
+    &copy; BBallStats, 2026
+  </div>
+  <div class="footer-contact" align="right">
+    <a href="tel:+381628421563" class="linkButton"> <img src="logoPhone_white.png" alt="logoPhone_white"
+        class="email-icon"> +381628421563 </a> <br>
+    <a href="mailto: bballstatsinfo@gmail.com" class="linkButton"> <img src="logoMail_white.png" alt="logoMail_white"
+        class="email-icon"> bballstatsinfo@gmail.com</a>
+  </div>
+</footer>
+
+<router-outlet></router-outlet>

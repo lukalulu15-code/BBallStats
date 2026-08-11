@@ -1,0 +1,1095 @@
+<div class="app-wrapper">
+
+  <body>
+    <!-- Navigacioni meni -->
+    <header>
+      <img src="bbballstats_logo.png" alt="logo" class="logo-img" />
+      <div align="right">
+      <a (click)="trenerPocetna()" class="linkButton">Početna</a>
+      <a (click)="pregledUtakmica()" class="linkButton">Utakmice</a>
+      <a (click)="logOut()" class="linkButton">Odjavi se</a>
+      </div>
+    </header>
+
+    <div *ngIf="trenerId==''">
+      Nemate pravo
+    </div>
+
+    <div class="prazno-kartica" *ngIf="trenerId != '' && nemaUtakmice">
+      Ne postoje prethodne utakmice
+    </div>
+
+    <div class="detalji-wrapper" *ngIf="trenerId != '' && !nemaUtakmice">
+
+      <!-- ZAGLAVLJE sa rezultatom -->
+      <div class="zaglavlje">
+        <div class="meta">{{ utakmica.datum }} · {{ utakmica.takmicenje }}</div>
+        <div class="rezultat-red">
+          <span class="tim-ime desno">{{ utakmica.domacin }}</span>
+          <div class="rezultat-brojevi">
+            <span class="poeni">{{ utakmica.poeniDomacin }}</span>
+            <span class="dvotacka">:</span>
+            <span class="poeni">{{ utakmica.poeniGost }}</span>
+          </div>
+          <span class="tim-ime levo">{{ utakmica.gost }}</span>
+        </div>
+      </div>
+
+      <!-- TAB BAR -->
+      <div class="tab-bar" align="center">
+        <button class="tab" [class.aktivan]="aktivanTab === 'boxscore'" (click)="postaviTab('boxscore')">
+          Box score
+        </button>&nbsp;
+        <button class="tab" [class.aktivan]="aktivanTab === 'pbp'" (click)="postaviTab('pbp')">
+          Play by play
+        </button>&nbsp;
+        <button class="tab" [class.aktivan]="aktivanTab === 'poredjenje'" (click)="postaviTab('poredjenje')">
+          Poređenje
+        </button>
+        <button class="tab" [class.aktivan]="aktivanTab === 'shootingChart'" (click)="postaviTab('shootingChart')">
+          Shooting chart
+        </button>
+      </div>
+
+      <!-- SADRŽAJ TABA -->
+      <div class="tab-sadrzaj">
+
+        <!-- BOX SCORE -->
+        <div *ngIf="aktivanTab === 'boxscore'">
+          <div class="igraci-wrapper-boxscore" *ngIf="utakmica!=null">
+            <!-- TABELA -->
+            <div class="tabela-wrapper">
+              <div class="tim-tabovi">
+                <button class="tab-btn" [class.aktivan]="prikaziEkipu === utakmica.domacin"
+                  (click)="izaberiBox(utakmica.domacin)">
+                  {{utakmica.domacin}}
+                </button>
+                <button class="tab-btn" [class.aktivan]="prikaziEkipu === utakmica.gost"
+                  (click)="izaberiBox(utakmica.gost)">
+                  {{utakmica.gost}}
+                </button>
+              </div>
+              <table class="tabela">
+                <thead>
+                  <tr>
+                    <th rowspan="2" class="th-boxscore" style="text-align:left;">Igrač</th>
+                    <th rowspan="2" class="th-boxscore">MIN</th>
+                    <th rowspan="2" class="th-boxscore">PTS</th>
+                    <th colspan="2" class="th-grupa" style="text-align: center;">2FG</th>
+                    <th colspan="2" class="th-grupa" style="text-align: center;">3FG</th>
+                    <th colspan="2" class="th-grupa" style="text-align: center;">FT</th>
+                    <th colspan="3" class="th-grupa" style="text-align: center;">Rebounds</th>
+                    <th rowspan="2" class="th-boxscore">AST</th>
+                    <th rowspan="2" class="th-boxscore">STL</th>
+                    <th rowspan="2" class="th-boxscore">TO</th>
+                    <th colspan="2" class="th-grupa" style="text-align: center;">BLK</th>
+                    <th colspan="2" class="th-grupa" style="text-align: center;">FOULS</th>
+                    <th rowspan="2" class="th-boxscore">PIR</th>
+                    <th rowspan="2" class="th-boxscore">+/-</th>
+                  </tr>
+                  <tr>
+                    <th class="sub-col-first">M/A</th>
+                    <th class="sub-col-last">%</th>
+                    <th class="sub-col-first">M/A</th>
+                    <th class="sub-col-last">%</th>
+                    <th class="sub-col-first">M/A</th>
+                    <th class="sub-col-last">%</th>
+                    <th class="sub-col-first">O</th>
+                    <th>D</th>
+                    <th class="sub-col-last">T</th>
+                    <th class="sub-col-first">F</th>
+                    <th class="sub-col-last">A</th>
+                    <th class="sub-col-first">C</th>
+                    <th class="sub-col-last">D</th>
+                  </tr>
+                </thead>
+                <tbody *ngIf="utakmica!=null && utakmica.domacin===prikaziEkipu">
+                  <tr *ngFor="let igrac of domaciIgraciStats">
+                    <td [class.igrac-link]="igrac.klub == klub" (click)="otvoriProfil(igrac.id)"  [style.font-weight]="igrac.teren ? 'bold' : 'normal'">{{igrac.broj}}
+                      {{igrac.ime[0]}}.{{igrac.prezime}} <span *ngIf="igrac.starter==true">*</span> </td>
+                    <td align="center">{{igrac.minuti}}</td>
+                    <td align="center">{{igrac.poeni}}</td>
+                    <td align="center">{{igrac.dvaPoenaPogodak}}/{{igrac.dvaPoenaPogodak+igrac.dvaPoenaPromasaj}}</td>
+                    <td align="center">{{igrac.dvaPoenaProcenat.toFixed(1)}}%</td>
+                    <td align="center">{{igrac.triPoenaPogodak}}/{{igrac.triPoenaPogodak+igrac.triPoenaPromasaj}}</td>
+                    <td align="center">{{igrac.triPoenaProcenat.toFixed(1)}}%</td>
+                    <td align="center">{{igrac.slobodnoPogodak}}/{{igrac.slobodnoPogodak+igrac.slobodnoPromasaj}}</td>
+                    <td align="center">{{igrac.slobodnoProcenat.toFixed(1)}}%</td>
+                    <td align="center">{{igrac.skokoviNapad}}</td>
+                    <td align="center">{{igrac.skokoviOdbrana}}</td>
+                    <td align="center">{{igrac.skokoviUkupno}}</td>
+                    <td align="center">{{igrac.asistencije}}</td>
+                    <td align="center">{{igrac.ukradene}}</td>
+                    <td align="center">{{igrac.izgubljene}}</td>
+                    <td align="center">{{igrac.blokade}}</td>
+                    <td align="center">{{igrac.blokadePrimljene}}</td>
+                    <td align="center">{{igrac.licneGreske}}</td>
+                    <td align="center">{{igrac.iznudjeniFaulovi}}</td>
+                    <td align="center">{{igrac.indeks}}</td>
+                    <td align="center">{{igrac.plusMinus}}</td>
+                  </tr>
+                  <tr>
+                    <td>Total</td>
+                    <td align="center">{{formatMinute(minutiUkupnoDomaci)}}</td>
+                    <td align="center">{{poeniUkupnoDomaci}}</td>
+                    <td align="center">
+                      {{dvaPoenaPogodakUkupnoDomaci}}/{{dvaPoenaPogodakUkupnoDomaci+dvaPoenaPromasajUkupnoDomaci}}</td>
+                    <td align="center">{{dvaPoenaProcenatUkupnoDomaci.toFixed(1)}}%</td>
+                    <td align="center">
+                      {{triPoenaPogodakUkupnoDomaci}}/{{triPoenaPogodakUkupnoDomaci+triPoenaPromasajUkupnoDomaci}}</td>
+                    <td align="center">{{triPoenaProcenatUkupnoDomaci.toFixed(1)}}%</td>
+                    <td align="center">
+                      {{slobodnoPogodakUkupnoDomaci}}/{{slobodnoPogodakUkupnoDomaci+slobodnoPromasajUkupnoDomaci}}</td>
+                    <td align="center">{{slobodnoProcenatUkupnoDomaci.toFixed(1)}}%</td>
+                    <td align="center">{{skokoviNapadUkupnoDomaci}}</td>
+                    <td align="center">{{skokoviOdbranaUkupnoDomaci}}</td>
+                    <td align="center">{{skokoviUkupnoUkupnoDomaci}}</td>
+                    <td align="center">{{asistencijeUkupnoDomaci}}</td>
+                    <td align="center">{{ukradeneUkupnoDomaci}}</td>
+                    <td align="center">{{izgubljeneUkupnoDomaci}}</td>
+                    <td align="center">{{blokadeUkupnoDomaci}}</td>
+                    <td align="center">{{blokadePrimljeneUkupnoDomaci}}</td>
+                    <td align="center">{{licneGreskeUkupnoDomaci}}</td>
+                    <td align="center">{{iznudjeniFauloviUkupnoDomaci}}</td>
+                    <td align="center">{{indeksUkupnoDomaci}}</td>
+                    <td align="center">{{plusMinusUkupnoDomaci}}</td>
+                  </tr>
+                </tbody>
+                <tbody *ngIf="utakmica!=null && utakmica.gost===prikaziEkipu">
+                  <tr *ngFor="let igrac of gostujuciIgraciStats">
+                    <td [class.igrac-link]="igrac.klub == klub" (click)="otvoriProfil(igrac.id)" [style.font-weight]="igrac.teren ? 'bold' : 'normal'">{{igrac.broj}}
+                      {{igrac.ime[0]}}.{{igrac.prezime}} <span *ngIf="igrac.starter==true">*</span></td>
+                    <td align="center">{{igrac.minuti}}</td>
+                    <td align="center">{{igrac.poeni}}</td>
+                    <td align="center">{{igrac.dvaPoenaPogodak}}/{{igrac.dvaPoenaPogodak+igrac.dvaPoenaPromasaj}}</td>
+                    <td align="center">{{igrac.dvaPoenaProcenat.toFixed(1)}}%</td>
+                    <td align="center">{{igrac.triPoenaPogodak}}/{{igrac.triPoenaPogodak+igrac.triPoenaPromasaj}}</td>
+                    <td align="center">{{igrac.triPoenaProcenat.toFixed(1)}}%</td>
+                    <td align="center">{{igrac.slobodnoPogodak}}/{{igrac.slobodnoPogodak+igrac.slobodnoPromasaj}}</td>
+                    <td align="center">{{igrac.slobodnoProcenat.toFixed(1)}}%</td>
+                    <td align="center">{{igrac.skokoviNapad}}</td>
+                    <td align="center">{{igrac.skokoviOdbrana}}</td>
+                    <td align="center">{{igrac.skokoviUkupno}}</td>
+                    <td align="center">{{igrac.asistencije}}</td>
+                    <td align="center">{{igrac.ukradene}}</td>
+                    <td align="center">{{igrac.izgubljene}}</td>
+                    <td align="center">{{igrac.blokade}}</td>
+                    <td align="center">{{igrac.blokadePrimljene}}</td>
+                    <td align="center">{{igrac.licneGreske}}</td>
+                    <td align="center">{{igrac.iznudjeniFaulovi}}</td>
+                    <td align="center">{{igrac.indeks}}</td>
+                    <td align="center">{{igrac.plusMinus}}</td>
+                  </tr>
+                  <tr>
+                    <td>Total</td>
+                    <td align="center">{{formatMinute(minutiUkupnoGosti)}}</td>
+                    <td align="center">{{poeniUkupnoGosti}}</td>
+                    <td align="center">
+                      {{dvaPoenaPogodakUkupnoGosti}}/{{dvaPoenaPogodakUkupnoGosti+dvaPoenaPromasajUkupnoGosti}}</td>
+                    <td align="center">{{dvaPoenaProcenatUkupnoGosti.toFixed(1)}}%</td>
+                    <td align="center">
+                      {{triPoenaPogodakUkupnoGosti}}/{{triPoenaPogodakUkupnoGosti+triPoenaPromasajUkupnoGosti}}</td>
+                    <td align="center">{{triPoenaProcenatUkupnoGosti.toFixed(1)}}%</td>
+                    <td align="center">
+                      {{slobodnoPogodakUkupnoGosti}}/{{slobodnoPogodakUkupnoGosti+slobodnoPromasajUkupnoGosti}}</td>
+                    <td align="center">{{slobodnoProcenatUkupnoGosti.toFixed(1)}}%</td>
+                    <td align="center">{{skokoviNapadUkupnoGosti}}</td>
+                    <td align="center">{{skokoviOdbranaUkupnoGosti}}</td>
+                    <td align="center">{{skokoviUkupnoUkupnoGosti}}</td>
+                    <td align="center">{{asistencijeUkupnoGosti}}</td>
+                    <td align="center">{{ukradeneUkupnoGosti}}</td>
+                    <td align="center">{{izgubljeneUkupnoGosti}}</td>
+                    <td align="center">{{blokadeUkupnoGosti}}</td>
+                    <td align="center">{{blokadePrimljeneUkupnoGosti}}</td>
+                    <td align="center">{{licneGreskeUkupnoGosti}}</td>
+                    <td align="center">{{iznudjeniFauloviUkupnoGosti}}</td>
+                    <td align="center">{{indeksUkupnoGosti}}</td>
+                    <td align="center">{{plusMinusUkupnoGosti}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- PLAY BY PLAY -->
+        <div *ngIf="aktivanTab === 'pbp'">
+
+          <div class="tim-tabovi">
+            <button class="tab-btn" [class.aktivan]="pbpCetvrtina==1" (click)="izaberiCetvrtinuPbp(1)">
+              1Q
+            </button>
+            <button class="tab-btn" [class.aktivan]="pbpCetvrtina==2" (click)="izaberiCetvrtinuPbp(2)">
+              2Q
+            </button>
+            <button class="tab-btn" [class.aktivan]="pbpCetvrtina==3" (click)="izaberiCetvrtinuPbp(3)">
+              3Q
+            </button>
+            <button class="tab-btn" [class.aktivan]="pbpCetvrtina==4" (click)="izaberiCetvrtinuPbp(4)">
+              4Q
+            </button>
+            <button class="tab-btn" [class.aktivan]="pbpCetvrtina==5" (click)="izaberiCetvrtinuPbp(5)">
+              OT
+            </button>
+          </div>
+          <div class="pbp-box">
+            <div class="pbp-label">Play by play</div>
+            <div class="pbp-scroll" *ngIf="pbpCetvrtina==1">
+              <div class="pbp-empty" *ngIf="dogadjajiPrvaCetvrtina.length === 0">Još nema događaja</div>
+              <div class="pbp-row" *ngFor="let d of dogadjajiPrvaCetvrtina">
+                <span class="pbp-t">Q{{ d.cetvrtina }} {{ d.vreme }}'</span>
+                <span class="pbp-n">#{{d.brojIgraca}} {{d.prezimeIgraca}}, {{ d.imeIgraca }}, {{d.klub}}</span>
+                <span class="pbp-d">{{ d.opis }}
+                  <span *ngIf="d.opis=='2FG Made'" class="pbp-n">&nbsp;{{d.igrac.poeni}}PTS, 2FG
+                    {{d.igrac.dvaPoenaPogodak}}/{{d.igrac.dvaPoenaPogodak+d.igrac.dvaPoenaPromasaj}},
+                    {{d.poeniDomacin}}-{{d.poeniGost}}</span>
+                  <span *ngIf="d.opis=='2FG Miss'" class="pbp-n">&nbsp;2FG
+                    {{d.igrac.dvaPoenaPogodak}}/{{d.igrac.dvaPoenaPogodak+d.igrac.dvaPoenaPromasaj}}
+                  </span>
+                  <span *ngIf="d.opis=='3FG Made'" class="pbp-n">&nbsp;{{d.igrac.poeni}}PTS, 3FG
+                    {{d.igrac.triPoenaPogodak}}/{{d.igrac.triPoenaPogodak+d.igrac.triPoenaPromasaj}},
+                    {{d.poeniDomacin}}-{{d.poeniGost}}</span>
+                  <span *ngIf="d.opis=='3FG Miss'" class="pbp-n">&nbsp;3FG
+                    {{d.igrac.triPoenaPogodak}}/{{d.igrac.triPoenaPogodak+d.igrac.triPoenaPromasaj}}</span>
+                  <span *ngIf="d.opis=='FT Made'" class="pbp-n">&nbsp;{{d.igrac.poeni}}PTS, FT
+                    {{d.igrac.slobodnoPogodak}}/{{d.igrac.slobodnoPogodak+d.igrac.slobodnoPromasaj}},
+                    {{d.poeniDomacin}}-{{d.poeniGost}}</span>
+                  <span *ngIf="d.opis=='FT Miss'" class="pbp-n">&nbsp;FT
+                    {{d.igrac.slobodnoPogodak}}/{{d.igrac.slobodnoPogodak+d.igrac.slobodnoPromasaj}}</span>
+                  <span *ngIf="d.opis=='Off Rebound'" class="pbp-n">&nbsp;{{d.igrac.skokoviUkupno}}REB
+                    ({{d.igrac.skokoviNapad}}off, {{d.igrac.skokoviOdbrana}}def)</span>
+                  <span *ngIf="d.opis=='Def Reb'" class="pbp-n">&nbsp;{{d.igrac.skokoviUkupno}}REB
+                    ({{d.igrac.skokoviNapad}}off, {{d.igrac.skokoviOdbrana}}def)</span>
+                  <span *ngIf="d.opis=='Assist'" class="pbp-n">&nbsp;{{d.igrac.asistencije}}AST</span>
+                  <span *ngIf="d.opis=='Steal'" class="pbp-n">&nbsp;{{d.igrac.ukradene}}STL</span>
+                  <span *ngIf="d.opis=='Block'" class="pbp-n">&nbsp;{{d.igrac.blokade}}BLK</span>
+                  <span *ngIf="d.opis=='Shot Rejected'" class="pbp-n">&nbsp;{{d.igrac.blokadePrimljene}} Shot
+                    rejected</span>
+                  <span *ngIf="d.opis=='Turnover'" class="pbp-n">&nbsp;{{d.igrac.izgubljene}}TO</span>
+                  <span *ngIf="d.opis=='Foul'" class="pbp-n">&nbsp;{{d.igrac.licneGreske}} Fouls</span>
+                  <span *ngIf="d.opis=='Foul drawn'" class="pbp-n">&nbsp;{{d.igrac.iznudjeniFaulovi}} Drawn fouls</span>
+                </span>
+
+              </div>
+            </div>
+            <div class="pbp-scroll" *ngIf="pbpCetvrtina==2">
+              <div class="pbp-empty" *ngIf="dogadjajiDrugaCetvrtina.length === 0">Još nema događaja</div>
+              <div class="pbp-row" *ngFor="let d of dogadjajiDrugaCetvrtina">
+                <span class="pbp-t">Q{{ d.cetvrtina }} {{ d.vreme }}'</span>
+                <span class="pbp-n">#{{d.brojIgraca}} {{d.prezimeIgraca}}, {{ d.imeIgraca }}, {{d.klub}}</span>
+                <span class="pbp-d">{{ d.opis }}
+                  <span *ngIf="d.opis=='2FG Made'" class="pbp-n">&nbsp;{{d.igrac.poeni}}PTS, 2FG
+                    {{d.igrac.dvaPoenaPogodak}}/{{d.igrac.dvaPoenaPogodak+d.igrac.dvaPoenaPromasaj}}</span>
+                  <span *ngIf="d.opis=='2FG Miss'" class="pbp-n">&nbsp;2FG
+                    {{d.igrac.dvaPoenaPogodak}}/{{d.igrac.dvaPoenaPogodak+d.igrac.dvaPoenaPromasaj}}
+                  </span>
+                  <span *ngIf="d.opis=='3FG Made'" class="pbp-n">&nbsp;{{d.igrac.poeni}}PTS, 3FG
+                    {{d.igrac.triPoenaPogodak}}/{{d.igrac.triPoenaPogodak+d.igrac.triPoenaPromasaj}}</span>
+                  <span *ngIf="d.opis=='3FG Miss'" class="pbp-n">&nbsp;3FG
+                    {{d.igrac.triPoenaPogodak}}/{{d.igrac.triPoenaPogodak+d.igrac.triPoenaPromasaj}}</span>
+                  <span *ngIf="d.opis=='FT Made'" class="pbp-n">&nbsp;{{d.igrac.poeni}}PTS, FT
+                    {{d.igrac.slobodnoPogodak}}/{{d.igrac.slobodnoPogodak+d.igrac.slobodnoPromasaj}}</span>
+                  <span *ngIf="d.opis=='FT Miss'" class="pbp-n">&nbsp;FT
+                    {{d.igrac.slobodnoPogodak}}/{{d.igrac.slobodnoPogodak+d.igrac.slobodnoPromasaj}}</span>
+                  <span *ngIf="d.opis=='Off Rebound'" class="pbp-n">&nbsp;{{d.igrac.skokoviUkupno}}REB
+                    ({{d.igrac.skokoviNapad}}off, {{d.igrac.skokoviOdbrana}}def)</span>
+                  <span *ngIf="d.opis=='Def Reb'" class="pbp-n">&nbsp;{{d.igrac.skokoviUkupno}}REB
+                    ({{d.igrac.skokoviNapad}}off, {{d.igrac.skokoviOdbrana}}def)</span>
+                  <span *ngIf="d.opis=='Assist'" class="pbp-n">&nbsp;{{d.igrac.asistencije}}AST</span>
+                  <span *ngIf="d.opis=='Steal'" class="pbp-n">&nbsp;{{d.igrac.ukradene}}STL</span>
+                  <span *ngIf="d.opis=='Block'" class="pbp-n">&nbsp;{{d.igrac.blokade}}BLK</span>
+                  <span *ngIf="d.opis=='Shot Rejected'" class="pbp-n">&nbsp;{{d.igrac.blokadePrimljene}} Shot
+                    rejected</span>
+                  <span *ngIf="d.opis=='Turnover'" class="pbp-n">&nbsp;{{d.igrac.izgubljene}}TO</span>
+                  <span *ngIf="d.opis=='Foul'" class="pbp-n">&nbsp;{{d.igrac.licneGreske}} Fouls</span>
+                  <span *ngIf="d.opis=='Foul drawn'" class="pbp-n">&nbsp;{{d.igrac.iznudjeniFaulovi}} Drawn fouls</span>
+                </span>
+
+              </div>
+            </div>
+            <div class="pbp-scroll" *ngIf="pbpCetvrtina==3">
+              <div class="pbp-empty" *ngIf="dogadjajiTrecaCetvrtina.length === 0">Još nema događaja</div>
+              <div class="pbp-row" *ngFor="let d of dogadjajiTrecaCetvrtina">
+                <span class="pbp-t">Q{{ d.cetvrtina }} {{ d.vreme }}'</span>
+                <span class="pbp-n">#{{d.brojIgraca}} {{d.prezimeIgraca}}, {{ d.imeIgraca }}, {{d.klub}}</span>
+                <span class="pbp-d">{{ d.opis }}
+                  <span *ngIf="d.opis=='2FG Made'" class="pbp-n">&nbsp;{{d.igrac.poeni}}PTS, 2FG
+                    {{d.igrac.dvaPoenaPogodak}}/{{d.igrac.dvaPoenaPogodak+d.igrac.dvaPoenaPromasaj}}</span>
+                  <span *ngIf="d.opis=='2FG Miss'" class="pbp-n">&nbsp;2FG
+                    {{d.igrac.dvaPoenaPogodak}}/{{d.igrac.dvaPoenaPogodak+d.igrac.dvaPoenaPromasaj}}
+                  </span>
+                  <span *ngIf="d.opis=='3FG Made'" class="pbp-n">&nbsp;{{d.igrac.poeni}}PTS, 3FG
+                    {{d.igrac.triPoenaPogodak}}/{{d.igrac.triPoenaPogodak+d.igrac.triPoenaPromasaj}}</span>
+                  <span *ngIf="d.opis=='3FG Miss'" class="pbp-n">&nbsp;3FG
+                    {{d.igrac.triPoenaPogodak}}/{{d.igrac.triPoenaPogodak+d.igrac.triPoenaPromasaj}}</span>
+                  <span *ngIf="d.opis=='FT Made'" class="pbp-n">&nbsp;{{d.igrac.poeni}}PTS, FT
+                    {{d.igrac.slobodnoPogodak}}/{{d.igrac.slobodnoPogodak+d.igrac.slobodnoPromasaj}}</span>
+                  <span *ngIf="d.opis=='FT Miss'" class="pbp-n">&nbsp;FT
+                    {{d.igrac.slobodnoPogodak}}/{{d.igrac.slobodnoPogodak+d.igrac.slobodnoPromasaj}}</span>
+                  <span *ngIf="d.opis=='Off Rebound'" class="pbp-n">&nbsp;{{d.igrac.skokoviUkupno}}REB
+                    ({{d.igrac.skokoviNapad}}off, {{d.igrac.skokoviOdbrana}}def)</span>
+                  <span *ngIf="d.opis=='Def Reb'" class="pbp-n">&nbsp;{{d.igrac.skokoviUkupno}}REB
+                    ({{d.igrac.skokoviNapad}}off, {{d.igrac.skokoviOdbrana}}def)</span>
+                  <span *ngIf="d.opis=='Assist'" class="pbp-n">&nbsp;{{d.igrac.asistencije}}AST</span>
+                  <span *ngIf="d.opis=='Steal'" class="pbp-n">&nbsp;{{d.igrac.ukradene}}STL</span>
+                  <span *ngIf="d.opis=='Block'" class="pbp-n">&nbsp;{{d.igrac.blokade}}BLK</span>
+                  <span *ngIf="d.opis=='Shot Rejected'" class="pbp-n">&nbsp;{{d.igrac.blokadePrimljene}} Shot
+                    rejected</span>
+                  <span *ngIf="d.opis=='Turnover'" class="pbp-n">&nbsp;{{d.igrac.izgubljene}}TO</span>
+                  <span *ngIf="d.opis=='Foul'" class="pbp-n">&nbsp;{{d.igrac.licneGreske}} Fouls</span>
+                  <span *ngIf="d.opis=='Foul drawn'" class="pbp-n">&nbsp;{{d.igrac.iznudjeniFaulovi}} Drawn fouls</span>
+                </span>
+
+              </div>
+            </div>
+            <div class="pbp-scroll" *ngIf="pbpCetvrtina==4">
+              <div class="pbp-empty" *ngIf="dogadjajiCetvrtaCetvrtina.length === 0">Još nema događaja</div>
+              <div class="pbp-row" *ngFor="let d of dogadjajiCetvrtaCetvrtina">
+                <span class="pbp-t">Q{{ d.cetvrtina }} {{ d.vreme }}'</span>
+                <span class="pbp-n">#{{d.brojIgraca}} {{d.prezimeIgraca}}, {{ d.imeIgraca }}, {{d.klub}}</span>
+                <span class="pbp-d">{{ d.opis }}
+                  <span *ngIf="d.opis=='2FG Made'" class="pbp-n">&nbsp;{{d.igrac.poeni}}PTS, 2FG
+                    {{d.igrac.dvaPoenaPogodak}}/{{d.igrac.dvaPoenaPogodak+d.igrac.dvaPoenaPromasaj}}</span>
+                  <span *ngIf="d.opis=='2FG Miss'" class="pbp-n">&nbsp;2FG
+                    {{d.igrac.dvaPoenaPogodak}}/{{d.igrac.dvaPoenaPogodak+d.igrac.dvaPoenaPromasaj}}
+                  </span>
+                  <span *ngIf="d.opis=='3FG Made'" class="pbp-n">&nbsp;{{d.igrac.poeni}}PTS, 3FG
+                    {{d.igrac.triPoenaPogodak}}/{{d.igrac.triPoenaPogodak+d.igrac.triPoenaPromasaj}}</span>
+                  <span *ngIf="d.opis=='3FG Miss'" class="pbp-n">&nbsp;3FG
+                    {{d.igrac.triPoenaPogodak}}/{{d.igrac.triPoenaPogodak+d.igrac.triPoenaPromasaj}}</span>
+                  <span *ngIf="d.opis=='FT Made'" class="pbp-n">&nbsp;{{d.igrac.poeni}}PTS, FT
+                    {{d.igrac.slobodnoPogodak}}/{{d.igrac.slobodnoPogodak+d.igrac.slobodnoPromasaj}}</span>
+                  <span *ngIf="d.opis=='FT Miss'" class="pbp-n">&nbsp;FT
+                    {{d.igrac.slobodnoPogodak}}/{{d.igrac.slobodnoPogodak+d.igrac.slobodnoPromasaj}}</span>
+                  <span *ngIf="d.opis=='Off Rebound'" class="pbp-n">&nbsp;{{d.igrac.skokoviUkupno}}REB
+                    ({{d.igrac.skokoviNapad}}off, {{d.igrac.skokoviOdbrana}}def)</span>
+                  <span *ngIf="d.opis=='Def Reb'" class="pbp-n">&nbsp;{{d.igrac.skokoviUkupno}}REB
+                    ({{d.igrac.skokoviNapad}}off, {{d.igrac.skokoviOdbrana}}def)</span>
+                  <span *ngIf="d.opis=='Assist'" class="pbp-n">&nbsp;{{d.igrac.asistencije}}AST</span>
+                  <span *ngIf="d.opis=='Steal'" class="pbp-n">&nbsp;{{d.igrac.ukradene}}STL</span>
+                  <span *ngIf="d.opis=='Block'" class="pbp-n">&nbsp;{{d.igrac.blokade}}BLK</span>
+                  <span *ngIf="d.opis=='Shot Rejected'" class="pbp-n">&nbsp;{{d.igrac.blokadePrimljene}} Shot
+                    rejected</span>
+                  <span *ngIf="d.opis=='Turnover'" class="pbp-n">&nbsp;{{d.igrac.izgubljene}}TO</span>
+                  <span *ngIf="d.opis=='Foul'" class="pbp-n">&nbsp;{{d.igrac.licneGreske}} Fouls</span>
+                  <span *ngIf="d.opis=='Foul drawn'" class="pbp-n">&nbsp;{{d.igrac.iznudjeniFaulovi}} Drawn fouls</span>
+                </span>
+
+              </div>
+            </div>
+            <div class="pbp-scroll" *ngIf="pbpCetvrtina>=5">
+              <div class="pbp-empty" *ngIf="dogadjajiProduzetak.length === 0">Još nema događaja</div>
+              <div class="pbp-row" *ngFor="let d of dogadjajiProduzetak">
+                <span class="pbp-t">Q{{ d.cetvrtina }} {{ d.vreme }}'</span>
+                <span class="pbp-n">#{{d.brojIgraca}} {{d.prezimeIgraca}}, {{ d.imeIgraca }}, {{d.klub}}</span>
+                <span class="pbp-d">{{ d.opis }}
+                  <span *ngIf="d.opis=='2FG Made'" class="pbp-n">&nbsp;{{d.igrac.poeni}}PTS, 2FG
+                    {{d.igrac.dvaPoenaPogodak}}/{{d.igrac.dvaPoenaPogodak+d.igrac.dvaPoenaPromasaj}}</span>
+                  <span *ngIf="d.opis=='2FG Miss'" class="pbp-n">&nbsp;2FG
+                    {{d.igrac.dvaPoenaPogodak}}/{{d.igrac.dvaPoenaPogodak+d.igrac.dvaPoenaPromasaj}}
+                  </span>
+                  <span *ngIf="d.opis=='3FG Made'" class="pbp-n">&nbsp;{{d.igrac.poeni}}PTS, 3FG
+                    {{d.igrac.triPoenaPogodak}}/{{d.igrac.triPoenaPogodak+d.igrac.triPoenaPromasaj}}</span>
+                  <span *ngIf="d.opis=='3FG Miss'" class="pbp-n">&nbsp;3FG
+                    {{d.igrac.triPoenaPogodak}}/{{d.igrac.triPoenaPogodak+d.igrac.triPoenaPromasaj}}</span>
+                  <span *ngIf="d.opis=='FT Made'" class="pbp-n">&nbsp;{{d.igrac.poeni}}PTS, FT
+                    {{d.igrac.slobodnoPogodak}}/{{d.igrac.slobodnoPogodak+d.igrac.slobodnoPromasaj}}</span>
+                  <span *ngIf="d.opis=='FT Miss'" class="pbp-n">&nbsp;FT
+                    {{d.igrac.slobodnoPogodak}}/{{d.igrac.slobodnoPogodak+d.igrac.slobodnoPromasaj}}</span>
+                  <span *ngIf="d.opis=='Off Rebound'" class="pbp-n">&nbsp;{{d.igrac.skokoviUkupno}}REB
+                    ({{d.igrac.skokoviNapad}}off, {{d.igrac.skokoviOdbrana}}def)</span>
+                  <span *ngIf="d.opis=='Def Reb'" class="pbp-n">&nbsp;{{d.igrac.skokoviUkupno}}REB
+                    ({{d.igrac.skokoviNapad}}off, {{d.igrac.skokoviOdbrana}}def)</span>
+                  <span *ngIf="d.opis=='Assist'" class="pbp-n">&nbsp;{{d.igrac.asistencije}}AST</span>
+                  <span *ngIf="d.opis=='Steal'" class="pbp-n">&nbsp;{{d.igrac.ukradene}}STL</span>
+                  <span *ngIf="d.opis=='Block'" class="pbp-n">&nbsp;{{d.igrac.blokade}}BLK</span>
+                  <span *ngIf="d.opis=='Shot Rejected'" class="pbp-n">&nbsp;{{d.igrac.blokadePrimljene}} Shot
+                    rejected</span>
+                  <span *ngIf="d.opis=='Turnover'" class="pbp-n">&nbsp;{{d.igrac.izgubljene}}TO</span>
+                  <span *ngIf="d.opis=='Foul'" class="pbp-n">&nbsp;{{d.igrac.licneGreske}} Fouls</span>
+                  <span *ngIf="d.opis=='Foul drawn'" class="pbp-n">&nbsp;{{d.igrac.iznudjeniFaulovi}} Drawn fouls</span>
+                </span>
+              </div>
+            </div>
+          </div>
+
+
+        </div>
+
+        <!-- POREĐENJE -->
+        <div *ngIf="aktivanTab === 'poredjenje'">
+          <div class="poredjenje-wrapper">
+
+            <div class="poredjenje-zaglavlje">
+              <div class="tim-ime levo">{{utakmica.domacin}}</div>
+              <div class="poredjenje-naslov">Timska Statistika</div>
+              <div class="tim-ime desno">{{utakmica.gost}}</div>
+            </div>
+
+            <div class="statistika-lista">
+
+              <div class="stat-red">
+                <div *ngIf="poeniUkupnoDomaci>=poeniUkupnoGosti" class="stat-vrednost levo vodi-highlight">
+                  {{poeniUkupnoDomaci}}</div>
+                <div *ngIf="poeniUkupnoGosti>poeniUkupnoDomaci" class="stat-vrednost levo">{{poeniUkupnoDomaci}}</div>
+                <div class="stat-centar">
+                  <div class="stat-ime">Poeni</div>
+                  <div class="bar-kontejner">
+                    <div class="bar-polovina levo-wrapper">
+                      <div class="bar-puni levo-tim"
+                        [style.width.%]="izracunajProcenat(poeniUkupnoDomaci, poeniUkupnoGosti)"></div>
+                    </div>
+                    <div class="bar-polovina desno-wrapper">
+                      <div class="bar-puni desno-tim"
+                        [style.width.%]="izracunajProcenat(poeniUkupnoGosti, poeniUkupnoDomaci)"></div>
+                    </div>
+                  </div>
+                </div>
+                <div *ngIf="poeniUkupnoGosti>=poeniUkupnoDomaci" class="stat-vrednost desno vodi-highlight">
+                  {{poeniUkupnoGosti}}</div>
+                <div *ngIf="poeniUkupnoDomaci>poeniUkupnoGosti" class="stat-vrednost desno">{{poeniUkupnoGosti}}</div>
+              </div>
+
+              <div class="stat-red">
+                <div
+                  *ngIf="dvaPoenaPogodakUkupnoDomaci+dvaPoenaPromasajUkupnoDomaci>=dvaPoenaPogodakUkupnoGosti+dvaPoenaPromasajUkupnoGosti"
+                  class="stat-vrednost levo vodi-highlight">{{dvaPoenaPogodakUkupnoDomaci+dvaPoenaPromasajUkupnoDomaci}}
+                </div>
+                <div
+                  *ngIf="dvaPoenaPogodakUkupnoDomaci+dvaPoenaPromasajUkupnoDomaci<dvaPoenaPogodakUkupnoGosti+dvaPoenaPromasajUkupnoGosti"
+                  class="stat-vrednost levo">{{dvaPoenaPogodakUkupnoDomaci+dvaPoenaPromasajUkupnoDomaci}}</div>
+                <div class="stat-centar">
+                  <div class="stat-ime">2FGs attempts</div>
+                  <div class="bar-kontejner">
+                    <div class="bar-polovina levo-wrapper">
+                      <div class="bar-puni levo-tim"
+                        [style.width.%]="izracunajProcenat(dvaPoenaPogodakUkupnoDomaci+dvaPoenaPromasajUkupnoDomaci, dvaPoenaPogodakUkupnoGosti+dvaPoenaPromasajUkupnoGosti)">
+                      </div>
+                    </div>
+                    <div class="bar-polovina desno-wrapper">
+                      <div class="bar-puni desno-tim"
+                        [style.width.%]="izracunajProcenat(dvaPoenaPogodakUkupnoGosti+dvaPoenaPromasajUkupnoGosti, dvaPoenaPogodakUkupnoDomaci+dvaPoenaPromasajUkupnoDomaci)">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  *ngIf="dvaPoenaPogodakUkupnoDomaci+dvaPoenaPromasajUkupnoDomaci<=dvaPoenaPogodakUkupnoGosti+dvaPoenaPromasajUkupnoGosti"
+                  class="stat-vrednost desno vodi-highlight">{{dvaPoenaPogodakUkupnoGosti+dvaPoenaPromasajUkupnoGosti}}
+                </div>
+                <div
+                  *ngIf="dvaPoenaPogodakUkupnoDomaci+dvaPoenaPromasajUkupnoDomaci>dvaPoenaPogodakUkupnoGosti+dvaPoenaPromasajUkupnoGosti"
+                  class="stat-vrednost desno">{{dvaPoenaPogodakUkupnoGosti+dvaPoenaPromasajUkupnoGosti}}</div>
+              </div>
+
+              <div class="stat-red">
+                <div *ngIf="dvaPoenaPogodakUkupnoDomaci>=dvaPoenaPogodakUkupnoGosti"
+                  class="stat-vrednost levo vodi-highlight">{{dvaPoenaPogodakUkupnoDomaci}}</div>
+                <div *ngIf="dvaPoenaPogodakUkupnoDomaci<dvaPoenaPogodakUkupnoGosti" class="stat-vrednost levo">
+                  {{dvaPoenaPogodakUkupnoDomaci}}</div>
+                <div class="stat-centar">
+                  <div class="stat-ime">2FGs made</div>
+                  <div class="bar-kontejner">
+                    <div class="bar-polovina levo-wrapper">
+                      <div class="bar-puni levo-tim"
+                        [style.width.%]="izracunajProcenat(dvaPoenaPogodakUkupnoDomaci, dvaPoenaPogodakUkupnoGosti)">
+                      </div>
+                    </div>
+                    <div class="bar-polovina desno-wrapper">
+                      <div class="bar-puni desno-tim"
+                        [style.width.%]="izracunajProcenat(dvaPoenaPogodakUkupnoGosti, dvaPoenaPogodakUkupnoDomaci)">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div *ngIf="dvaPoenaPogodakUkupnoDomaci<=dvaPoenaPogodakUkupnoGosti"
+                  class="stat-vrednost desno vodi-highlight">{{dvaPoenaPogodakUkupnoGosti}}</div>
+                <div *ngIf="dvaPoenaPogodakUkupnoDomaci>dvaPoenaPogodakUkupnoGosti" class="stat-vrednost desno">
+                  {{dvaPoenaPogodakUkupnoGosti}}</div>
+              </div>
+
+              <div class="stat-red">
+                <div *ngIf="dvaPoenaProcenatUkupnoDomaci>=dvaPoenaProcenatUkupnoGosti"
+                  class="stat-vrednost levo vodi-highlight">{{dvaPoenaProcenatUkupnoDomaci.toFixed(1)}}%</div>
+                <div *ngIf="dvaPoenaProcenatUkupnoDomaci<dvaPoenaProcenatUkupnoGosti" class="stat-vrednost levo">
+                  {{dvaPoenaProcenatUkupnoDomaci.toFixed(1)}}%</div>
+                <div class="stat-centar">
+                  <div class="stat-ime">2FGs%</div>
+                  <div class="bar-kontejner">
+                    <div class="bar-polovina levo-wrapper">
+                      <div class="bar-puni levo-tim"
+                        [style.width.%]="izracunajProcenat(dvaPoenaProcenatUkupnoDomaci, dvaPoenaProcenatUkupnoGosti)">
+                      </div>
+                    </div>
+                    <div class="bar-polovina desno-wrapper">
+                      <div class="bar-puni desno-tim"
+                        [style.width.%]="izracunajProcenat(dvaPoenaProcenatUkupnoGosti, dvaPoenaProcenatUkupnoDomaci)">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div *ngIf="dvaPoenaProcenatUkupnoDomaci<=dvaPoenaProcenatUkupnoGosti"
+                  class="stat-vrednost desno vodi-highlight">{{dvaPoenaProcenatUkupnoGosti.toFixed(1)}}%</div>
+                <div *ngIf="dvaPoenaProcenatUkupnoDomaci>dvaPoenaProcenatUkupnoGosti" class="stat-vrednost desno">
+                  {{dvaPoenaProcenatUkupnoGosti.toFixed(1)}}%</div>
+              </div>
+
+              <div class="stat-red">
+                <div
+                  *ngIf="triPoenaPogodakUkupnoDomaci+triPoenaPromasajUkupnoDomaci>=triPoenaPogodakUkupnoGosti+triPoenaPromasajUkupnoGosti"
+                  class="stat-vrednost levo vodi-highlight">{{triPoenaPogodakUkupnoDomaci+triPoenaPromasajUkupnoDomaci}}
+                </div>
+                <div
+                  *ngIf="triPoenaPogodakUkupnoDomaci+triPoenaPromasajUkupnoDomaci<triPoenaPogodakUkupnoGosti+triPoenaPromasajUkupnoGosti"
+                  class="stat-vrednost levo">{{triPoenaPogodakUkupnoDomaci+triPoenaPromasajUkupnoDomaci}}</div>
+                <div class="stat-centar">
+                  <div class="stat-ime">3FGs attempts</div>
+                  <div class="bar-kontejner">
+                    <div class="bar-polovina levo-wrapper">
+                      <div class="bar-puni levo-tim"
+                        [style.width.%]="izracunajProcenat(triPoenaPogodakUkupnoDomaci+triPoenaPromasajUkupnoDomaci, triPoenaPogodakUkupnoGosti+triPoenaPromasajUkupnoGosti)">
+                      </div>
+                    </div>
+                    <div class="bar-polovina desno-wrapper">
+                      <div class="bar-puni desno-tim"
+                        [style.width.%]="izracunajProcenat(triPoenaPogodakUkupnoGosti+triPoenaPromasajUkupnoGosti, triPoenaPogodakUkupnoDomaci+triPoenaPromasajUkupnoDomaci)">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  *ngIf="triPoenaPogodakUkupnoDomaci+triPoenaPromasajUkupnoDomaci<=triPoenaPogodakUkupnoGosti+triPoenaPromasajUkupnoGosti"
+                  class="stat-vrednost desno vodi-highlight">{{triPoenaPogodakUkupnoGosti+triPoenaPromasajUkupnoGosti}}
+                </div>
+                <div
+                  *ngIf="triPoenaPogodakUkupnoDomaci+triPoenaPromasajUkupnoDomaci>triPoenaPogodakUkupnoGosti+triPoenaPromasajUkupnoGosti"
+                  class="stat-vrednost desno">{{triPoenaPogodakUkupnoGosti+triPoenaPromasajUkupnoGosti}}</div>
+              </div>
+
+              <div class="stat-red">
+                <div *ngIf="triPoenaPogodakUkupnoDomaci>=triPoenaPogodakUkupnoGosti"
+                  class="stat-vrednost levo vodi-highlight">{{triPoenaPogodakUkupnoDomaci}}</div>
+                <div *ngIf="triPoenaPogodakUkupnoDomaci<triPoenaPogodakUkupnoGosti" class="stat-vrednost levo">
+                  {{triPoenaPogodakUkupnoDomaci}}</div>
+                <div class="stat-centar">
+                  <div class="stat-ime">3FGs made</div>
+                  <div class="bar-kontejner">
+                    <div class="bar-polovina levo-wrapper">
+                      <div class="bar-puni levo-tim"
+                        [style.width.%]="izracunajProcenat(triPoenaPogodakUkupnoDomaci, triPoenaPogodakUkupnoGosti)">
+                      </div>
+                    </div>
+                    <div class="bar-polovina desno-wrapper">
+                      <div class="bar-puni desno-tim"
+                        [style.width.%]="izracunajProcenat(triPoenaPogodakUkupnoGosti, triPoenaPogodakUkupnoDomaci)">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div *ngIf="triPoenaPogodakUkupnoDomaci<=triPoenaPogodakUkupnoGosti"
+                  class="stat-vrednost desno vodi-highlight">{{triPoenaPogodakUkupnoGosti}}</div>
+                <div *ngIf="triPoenaPogodakUkupnoDomaci>triPoenaPogodakUkupnoGosti" class="stat-vrednost desno">
+                  {{triPoenaPogodakUkupnoGosti}}</div>
+              </div>
+
+
+              <div class="stat-red">
+                <div *ngIf="triPoenaProcenatUkupnoDomaci>=triPoenaProcenatUkupnoGosti"
+                  class="stat-vrednost levo vodi-highlight">{{triPoenaProcenatUkupnoDomaci.toFixed(1)}}%</div>
+                <div *ngIf="triPoenaProcenatUkupnoDomaci<triPoenaProcenatUkupnoGosti" class="stat-vrednost levo">
+                  {{triPoenaProcenatUkupnoDomaci.toFixed(1)}}%</div>
+                <div class="stat-centar">
+                  <div class="stat-ime">3FGs%</div>
+                  <div class="bar-kontejner">
+                    <div class="bar-polovina levo-wrapper">
+                      <div class="bar-puni levo-tim"
+                        [style.width.%]="izracunajProcenat(triPoenaProcenatUkupnoDomaci, triPoenaProcenatUkupnoGosti)">
+                      </div>
+                    </div>
+                    <div class="bar-polovina desno-wrapper">
+                      <div class="bar-puni desno-tim"
+                        [style.width.%]="izracunajProcenat(triPoenaProcenatUkupnoGosti, triPoenaProcenatUkupnoDomaci)">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div *ngIf="triPoenaProcenatUkupnoDomaci<=triPoenaProcenatUkupnoGosti"
+                  class="stat-vrednost desno vodi-highlight">{{triPoenaProcenatUkupnoGosti.toFixed(1)}}%</div>
+                <div *ngIf="triPoenaProcenatUkupnoDomaci>triPoenaProcenatUkupnoGosti" class="stat-vrednost desno">
+                  {{triPoenaProcenatUkupnoGosti.toFixed(1)}}%</div>
+              </div>
+
+
+
+              <div class="stat-red">
+                <div
+                  *ngIf="slobodnoPogodakUkupnoDomaci+slobodnoPromasajUkupnoDomaci>=slobodnoPogodakUkupnoGosti+slobodnoPromasajUkupnoGosti"
+                  class="stat-vrednost levo vodi-highlight">{{slobodnoPogodakUkupnoDomaci+slobodnoPromasajUkupnoDomaci}}
+                </div>
+                <div
+                  *ngIf="slobodnoPogodakUkupnoDomaci+slobodnoPromasajUkupnoDomaci<slobodnoPogodakUkupnoGosti+slobodnoPromasajUkupnoGosti"
+                  class="stat-vrednost levo">{{slobodnoPogodakUkupnoDomaci+slobodnoPromasajUkupnoDomaci}}</div>
+                <div class="stat-centar">
+                  <div class="stat-ime">FTs attempts</div>
+                  <div class="bar-kontejner">
+                    <div class="bar-polovina levo-wrapper">
+                      <div class="bar-puni levo-tim"
+                        [style.width.%]="izracunajProcenat(slobodnoPogodakUkupnoDomaci+slobodnoPromasajUkupnoDomaci, slobodnoPogodakUkupnoGosti+slobodnoPromasajUkupnoGosti)">
+                      </div>
+                    </div>
+                    <div class="bar-polovina desno-wrapper">
+                      <div class="bar-puni desno-tim"
+                        [style.width.%]="izracunajProcenat(slobodnoPogodakUkupnoGosti+slobodnoPromasajUkupnoGosti, slobodnoPogodakUkupnoDomaci+slobodnoPromasajUkupnoDomaci)">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  *ngIf="slobodnoPogodakUkupnoDomaci+slobodnoPromasajUkupnoDomaci<=slobodnoPogodakUkupnoGosti+slobodnoPromasajUkupnoGosti"
+                  class="stat-vrednost desno vodi-highlight">{{slobodnoPogodakUkupnoGosti+slobodnoPromasajUkupnoGosti}}
+                </div>
+                <div
+                  *ngIf="slobodnoPogodakUkupnoDomaci+slobodnoPromasajUkupnoDomaci>slobodnoPogodakUkupnoGosti+slobodnoPromasajUkupnoGosti"
+                  class="stat-vrednost desno">{{slobodnoPogodakUkupnoGosti+slobodnoPromasajUkupnoGosti}}</div>
+              </div>
+
+              <div class="stat-red">
+                <div *ngIf="slobodnoPogodakUkupnoDomaci>=slobodnoPogodakUkupnoGosti"
+                  class="stat-vrednost levo vodi-highlight">{{slobodnoPogodakUkupnoDomaci}}</div>
+                <div *ngIf="slobodnoPogodakUkupnoDomaci<slobodnoPogodakUkupnoGosti" class="stat-vrednost levo">
+                  {{slobodnoPogodakUkupnoDomaci}}</div>
+                <div class="stat-centar">
+                  <div class="stat-ime">FTs made</div>
+                  <div class="bar-kontejner">
+                    <div class="bar-polovina levo-wrapper">
+                      <div class="bar-puni levo-tim"
+                        [style.width.%]="izracunajProcenat(slobodnoPogodakUkupnoDomaci, slobodnoPogodakUkupnoGosti)">
+                      </div>
+                    </div>
+                    <div class="bar-polovina desno-wrapper">
+                      <div class="bar-puni desno-tim"
+                        [style.width.%]="izracunajProcenat(slobodnoPogodakUkupnoGosti, slobodnoPogodakUkupnoDomaci)">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div *ngIf="slobodnoPogodakUkupnoDomaci<=slobodnoPogodakUkupnoGosti"
+                  class="stat-vrednost desno vodi-highlight">{{slobodnoPogodakUkupnoGosti}}</div>
+                <div *ngIf="slobodnoPogodakUkupnoDomaci>slobodnoPogodakUkupnoGosti" class="stat-vrednost desno">
+                  {{slobodnoPogodakUkupnoGosti}}</div>
+              </div>
+
+              <div class="stat-red">
+                <div *ngIf="slobodnoProcenatUkupnoDomaci>=slobodnoProcenatUkupnoGosti"
+                  class="stat-vrednost levo vodi-highlight">{{slobodnoProcenatUkupnoDomaci.toFixed(1)}}%</div>
+                <div *ngIf="slobodnoProcenatUkupnoDomaci<slobodnoProcenatUkupnoGosti" class="stat-vrednost levo">
+                  {{slobodnoProcenatUkupnoDomaci.toFixed(1)}}%</div>
+                <div class="stat-centar">
+                  <div class="stat-ime">FTs%</div>
+                  <div class="bar-kontejner">
+                    <div class="bar-polovina levo-wrapper">
+                      <div class="bar-puni levo-tim"
+                        [style.width.%]="izracunajProcenat(slobodnoProcenatUkupnoDomaci, slobodnoProcenatUkupnoGosti)">
+                      </div>
+                    </div>
+                    <div class="bar-polovina desno-wrapper">
+                      <div class="bar-puni desno-tim"
+                        [style.width.%]="izracunajProcenat(slobodnoProcenatUkupnoGosti, slobodnoProcenatUkupnoDomaci)">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div *ngIf="slobodnoProcenatUkupnoDomaci<=slobodnoProcenatUkupnoGosti"
+                  class="stat-vrednost desno vodi-highlight">{{slobodnoProcenatUkupnoGosti.toFixed(1)}}%</div>
+                <div *ngIf="slobodnoProcenatUkupnoDomaci>slobodnoProcenatUkupnoGosti" class="stat-vrednost desno">
+                  {{slobodnoProcenatUkupnoGosti.toFixed(1)}}%</div>
+              </div>
+
+
+              <div class="stat-red">
+                <div *ngIf="skokoviUkupnoUkupnoDomaci>=skokoviUkupnoUkupnoGosti"
+                  class="stat-vrednost levo vodi-highlight">{{skokoviUkupnoUkupnoDomaci}}</div>
+                <div *ngIf="skokoviUkupnoUkupnoDomaci<skokoviUkupnoUkupnoGosti" class="stat-vrednost levo">
+                  {{skokoviUkupnoUkupnoDomaci}}</div>
+                <div class="stat-centar">
+                  <div class="stat-ime">Skokovi ukupno</div>
+                  <div class="bar-kontejner">
+                    <div class="bar-polovina levo-wrapper">
+                      <div class="bar-puni levo-tim"
+                        [style.width.%]="izracunajProcenat(skokoviUkupnoUkupnoDomaci, skokoviUkupnoUkupnoGosti)"></div>
+                    </div>
+                    <div class="bar-polovina desno-wrapper">
+                      <div class="bar-puni desno-tim"
+                        [style.width.%]="izracunajProcenat(skokoviUkupnoUkupnoGosti, skokoviUkupnoUkupnoDomaci)"></div>
+                    </div>
+                  </div>
+                </div>
+                <div *ngIf="skokoviUkupnoUkupnoDomaci<=skokoviUkupnoUkupnoGosti"
+                  class="stat-vrednost desno vodi-highlight">{{skokoviUkupnoUkupnoGosti}}</div>
+                <div *ngIf="skokoviUkupnoUkupnoDomaci>skokoviUkupnoUkupnoGosti" class="stat-vrednost desno">
+                  {{skokoviUkupnoUkupnoGosti}}</div>
+              </div>
+
+              <div class="stat-red">
+                <div *ngIf="skokoviNapadUkupnoDomaci>=skokoviNapadUkupnoGosti"
+                  class="stat-vrednost levo vodi-highlight">{{skokoviNapadUkupnoDomaci}}</div>
+                <div *ngIf="skokoviNapadUkupnoDomaci<skokoviNapadUkupnoGosti" class="stat-vrednost levo">
+                  {{skokoviNapadUkupnoDomaci}}</div>
+                <div class="stat-centar">
+                  <div class="stat-ime">Skokovi napad</div>
+                  <div class="bar-kontejner">
+                    <div class="bar-polovina levo-wrapper">
+                      <div class="bar-puni levo-tim"
+                        [style.width.%]="izracunajProcenat(skokoviNapadUkupnoDomaci, skokoviNapadUkupnoGosti)"></div>
+                    </div>
+                    <div class="bar-polovina desno-wrapper">
+                      <div class="bar-puni desno-tim"
+                        [style.width.%]="izracunajProcenat(skokoviNapadUkupnoGosti, skokoviNapadUkupnoDomaci)"></div>
+                    </div>
+                  </div>
+                </div>
+                <div *ngIf="skokoviNapadUkupnoDomaci<=skokoviNapadUkupnoGosti"
+                  class="stat-vrednost desno vodi-highlight">{{skokoviNapadUkupnoGosti}}</div>
+                <div *ngIf="skokoviNapadUkupnoDomaci>skokoviNapadUkupnoGosti" class="stat-vrednost desno">
+                  {{skokoviNapadUkupnoGosti}}</div>
+              </div>
+
+              <div class="stat-red">
+                <div *ngIf="skokoviOdbranaUkupnoDomaci>=skokoviOdbranaUkupnoGosti"
+                  class="stat-vrednost levo vodi-highlight">{{skokoviOdbranaUkupnoDomaci}}</div>
+                <div *ngIf="skokoviOdbranaUkupnoDomaci<skokoviOdbranaUkupnoGosti" class="stat-vrednost levo">
+                  {{skokoviOdbranaUkupnoDomaci}}</div>
+                <div class="stat-centar">
+                  <div class="stat-ime">Skokovi odbrana</div>
+                  <div class="bar-kontejner">
+                    <div class="bar-polovina levo-wrapper">
+                      <div class="bar-puni levo-tim"
+                        [style.width.%]="izracunajProcenat(skokoviOdbranaUkupnoDomaci, skokoviOdbranaUkupnoGosti)">
+                      </div>
+                    </div>
+                    <div class="bar-polovina desno-wrapper">
+                      <div class="bar-puni desno-tim"
+                        [style.width.%]="izracunajProcenat(skokoviOdbranaUkupnoGosti, skokoviOdbranaUkupnoDomaci)">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div *ngIf="skokoviOdbranaUkupnoDomaci<=skokoviOdbranaUkupnoGosti"
+                  class="stat-vrednost desno vodi-highlight">{{skokoviOdbranaUkupnoGosti}}</div>
+                <div *ngIf="skokoviOdbranaUkupnoDomaci>skokoviOdbranaUkupnoGosti" class="stat-vrednost desno">
+                  {{skokoviOdbranaUkupnoGosti}}</div>
+              </div>
+
+
+              <div class="stat-red">
+                <div *ngIf="asistencijeUkupnoDomaci>=asistencijeUkupnoGosti" class="stat-vrednost levo vodi-highlight">
+                  {{asistencijeUkupnoDomaci}}</div>
+                <div *ngIf="asistencijeUkupnoDomaci<asistencijeUkupnoGosti" class="stat-vrednost levo">
+                  {{asistencijeUkupnoDomaci}}</div>
+                <div class="stat-centar">
+                  <div class="stat-ime">Asistencije</div>
+                  <div class="bar-kontejner">
+                    <div class="bar-polovina levo-wrapper">
+                      <div class="bar-puni levo-tim"
+                        [style.width.%]="izracunajProcenat(asistencijeUkupnoDomaci, asistencijeUkupnoGosti)"></div>
+                    </div>
+                    <div class="bar-polovina desno-wrapper">
+                      <div class="bar-puni desno-tim"
+                        [style.width.%]="izracunajProcenat(asistencijeUkupnoGosti, asistencijeUkupnoDomaci)"></div>
+                    </div>
+                  </div>
+                </div>
+                <div *ngIf="asistencijeUkupnoDomaci<=asistencijeUkupnoGosti" class="stat-vrednost desno vodi-highlight">
+                  {{asistencijeUkupnoGosti}}</div>
+                <div *ngIf="asistencijeUkupnoDomaci>asistencijeUkupnoGosti" class="stat-vrednost desno">
+                  {{asistencijeUkupnoGosti}}</div>
+              </div>
+
+              <div class="stat-red">
+                <div *ngIf="ukradeneUkupnoDomaci>=ukradeneUkupnoGosti" class="stat-vrednost levo vodi-highlight">
+                  {{ukradeneUkupnoDomaci}}</div>
+                <div *ngIf="ukradeneUkupnoDomaci<ukradeneUkupnoGosti" class="stat-vrednost levo">
+                  {{ukradeneUkupnoDomaci}}</div>
+                <div class="stat-centar">
+                  <div class="stat-ime">Ukradene</div>
+                  <div class="bar-kontejner">
+                    <div class="bar-polovina levo-wrapper">
+                      <div class="bar-puni levo-tim"
+                        [style.width.%]="izracunajProcenat(ukradeneUkupnoDomaci, ukradeneUkupnoGosti)"></div>
+                    </div>
+                    <div class="bar-polovina desno-wrapper">
+                      <div class="bar-puni desno-tim"
+                        [style.width.%]="izracunajProcenat(ukradeneUkupnoGosti, ukradeneUkupnoDomaci)"></div>
+                    </div>
+                  </div>
+                </div>
+                <div *ngIf="ukradeneUkupnoDomaci<=ukradeneUkupnoGosti" class="stat-vrednost desno vodi-highlight">
+                  {{ukradeneUkupnoGosti}}</div>
+                <div *ngIf="ukradeneUkupnoDomaci>ukradeneUkupnoGosti" class="stat-vrednost desno">
+                  {{ukradeneUkupnoGosti}}</div>
+              </div>
+
+              <div class="stat-red">
+                <div *ngIf="izgubljeneUkupnoDomaci>=izgubljeneUkupnoGosti" class="stat-vrednost levo vodi-highlight">
+                  {{izgubljeneUkupnoDomaci}}</div>
+                <div *ngIf="izgubljeneUkupnoDomaci<izgubljeneUkupnoGosti" class="stat-vrednost levo">
+                  {{izgubljeneUkupnoDomaci}}</div>
+                <div class="stat-centar">
+                  <div class="stat-ime">Izgubljene</div>
+                  <div class="bar-kontejner">
+                    <div class="bar-polovina levo-wrapper">
+                      <div class="bar-puni levo-tim"
+                        [style.width.%]="izracunajProcenat(izgubljeneUkupnoDomaci, izgubljeneUkupnoGosti)"></div>
+                    </div>
+                    <div class="bar-polovina desno-wrapper">
+                      <div class="bar-puni desno-tim"
+                        [style.width.%]="izracunajProcenat(izgubljeneUkupnoGosti, izgubljeneUkupnoDomaci)"></div>
+                    </div>
+                  </div>
+                </div>
+                <div *ngIf="izgubljeneUkupnoDomaci<=izgubljeneUkupnoGosti" class="stat-vrednost desno vodi-highlight">
+                  {{izgubljeneUkupnoGosti}}</div>
+                <div *ngIf="izgubljeneUkupnoDomaci>izgubljeneUkupnoGosti" class="stat-vrednost desno">
+                  {{izgubljeneUkupnoGosti}}</div>
+              </div>
+
+              <div class="stat-red">
+                <div *ngIf="blokadeUkupnoDomaci>=blokadeUkupnoGosti" class="stat-vrednost levo vodi-highlight">
+                  {{blokadeUkupnoDomaci}}</div>
+                <div *ngIf="blokadeUkupnoDomaci<blokadeUkupnoGosti" class="stat-vrednost levo">{{blokadeUkupnoDomaci}}
+                </div>
+                <div class="stat-centar">
+                  <div class="stat-ime">Blokade</div>
+                  <div class="bar-kontejner">
+                    <div class="bar-polovina levo-wrapper">
+                      <div class="bar-puni levo-tim"
+                        [style.width.%]="izracunajProcenat(blokadeUkupnoDomaci, blokadeUkupnoGosti)"></div>
+                    </div>
+                    <div class="bar-polovina desno-wrapper">
+                      <div class="bar-puni desno-tim"
+                        [style.width.%]="izracunajProcenat(blokadeUkupnoGosti, blokadeUkupnoDomaci)"></div>
+                    </div>
+                  </div>
+                </div>
+                <div *ngIf="blokadeUkupnoDomaci<=blokadeUkupnoGosti" class="stat-vrednost desno vodi-highlight">
+                  {{blokadeUkupnoGosti}}</div>
+                <div *ngIf="blokadeUkupnoDomaci>blokadeUkupnoGosti" class="stat-vrednost desno">{{blokadeUkupnoGosti}}
+                </div>
+              </div>
+
+              <div class="stat-red">
+                <div *ngIf="licneGreskeUkupnoDomaci>=licneGreskeUkupnoGosti" class="stat-vrednost levo vodi-highlight">
+                  {{licneGreskeUkupnoDomaci}}</div>
+                <div *ngIf="licneGreskeUkupnoDomaci<licneGreskeUkupnoGosti" class="stat-vrednost levo">
+                  {{licneGreskeUkupnoDomaci}}</div>
+                <div class="stat-centar">
+                  <div class="stat-ime">Faulovi</div>
+                  <div class="bar-kontejner">
+                    <div class="bar-polovina levo-wrapper">
+                      <div class="bar-puni levo-tim"
+                        [style.width.%]="izracunajProcenat(licneGreskeUkupnoDomaci, licneGreskeUkupnoGosti)"></div>
+                    </div>
+                    <div class="bar-polovina desno-wrapper">
+                      <div class="bar-puni desno-tim"
+                        [style.width.%]="izracunajProcenat(licneGreskeUkupnoGosti, licneGreskeUkupnoDomaci)"></div>
+                    </div>
+                  </div>
+                </div>
+                <div *ngIf="licneGreskeUkupnoDomaci<=licneGreskeUkupnoGosti" class="stat-vrednost desno vodi-highlight">
+                  {{licneGreskeUkupnoGosti}}</div>
+                <div *ngIf="licneGreskeUkupnoDomaci>licneGreskeUkupnoGosti" class="stat-vrednost desno">
+                  {{licneGreskeUkupnoGosti}}</div>
+              </div>
+
+              <div class="stat-red">
+                <div *ngIf="indeksUkupnoDomaci>=indeksUkupnoGosti" class="stat-vrednost levo vodi-highlight">
+                  {{indeksUkupnoDomaci}}</div>
+                <div *ngIf="indeksUkupnoDomaci<indeksUkupnoGosti" class="stat-vrednost levo">{{indeksUkupnoDomaci}}
+                </div>
+                <div class="stat-centar">
+                  <div class="stat-ime">Indeks korisnosti</div>
+                  <div class="bar-kontejner">
+                    <div class="bar-polovina levo-wrapper">
+                      <div class="bar-puni levo-tim"
+                        [style.width.%]="izracunajProcenat(indeksUkupnoDomaci, indeksUkupnoGosti)"></div>
+                    </div>
+                    <div class="bar-polovina desno-wrapper">
+                      <div class="bar-puni desno-tim"
+                        [style.width.%]="izracunajProcenat(indeksUkupnoGosti, indeksUkupnoDomaci)"></div>
+                    </div>
+                  </div>
+                </div>
+                <div *ngIf="indeksUkupnoDomaci<=indeksUkupnoGosti" class="stat-vrednost desno vodi-highlight">
+                  {{indeksUkupnoGosti}}</div>
+                <div *ngIf="indeksUkupnoDomaci>indeksUkupnoGosti" class="stat-vrednost desno">{{indeksUkupnoGosti}}
+                </div>
+              </div>
+
+              <div class="grafikon-wrapper">
+                <div class="grafikon-naslov">Kretanje rezultata</div>
+                <canvas #scoreChart></canvas>
+              </div>
+
+              <div class="pie-sekcija">
+                <div class="pie-naslov">Poeni: starteri vs klupa</div>
+                <div class="pie-red">
+                  <div class="pie-blok">
+                    <div class="pie-tim-ime">{{ utakmica.domacin }}</div>
+                    <canvas #pieDomaciPoeni></canvas>
+                  </div>
+                  <div class="pie-blok">
+                    <div class="pie-tim-ime">{{ utakmica.gost }}</div>
+                    <canvas #pieGostiPoeni></canvas>
+                  </div>
+                </div>
+              </div>
+
+              <div class="pie-sekcija">
+                <div class="pie-naslov">Skokovi: starteri vs klupa</div>
+                <div class="pie-red">
+                  <div class="pie-blok">
+                    <div class="pie-tim-ime">{{ utakmica.domacin }}</div>
+                    <canvas #pieDomaciSkokovi></canvas>
+                  </div>
+                  <div class="pie-blok">
+                    <div class="pie-tim-ime">{{ utakmica.gost }}</div>
+                    <canvas #pieGostiSkokovi></canvas>
+                  </div>
+                </div>
+              </div>
+
+              <div class="pie-sekcija">
+                <div class="pie-naslov">Asistencije: starteri vs klupa</div>
+                <div class="pie-red">
+                  <div class="pie-blok">
+                    <div class="pie-tim-ime">{{ utakmica.domacin }}</div>
+                    <canvas #pieDomaciAsistencije></canvas>
+                  </div>
+                  <div class="pie-blok">
+                    <div class="pie-tim-ime">{{ utakmica.gost }}</div>
+                    <canvas #pieGostiAsistencije></canvas>
+                  </div>
+                </div>
+              </div>
+
+              <div class="pie-sekcija">
+                <div class="pie-naslov">Ukradene: starteri vs klupa</div>
+                <div class="pie-red">
+                  <div class="pie-blok">
+                    <div class="pie-tim-ime">{{ utakmica.domacin }}</div>
+                    <canvas #pieDomaciUkradene></canvas>
+                  </div>
+                  <div class="pie-blok">
+                    <div class="pie-tim-ime">{{ utakmica.gost }}</div>
+                    <canvas #pieGostiUkradene></canvas>
+                  </div>
+                </div>
+              </div>
+
+              <div class="pie-sekcija">
+                <div class="pie-naslov">Izgubljene: starteri vs klupa</div>
+                <div class="pie-red">
+                  <div class="pie-blok">
+                    <div class="pie-tim-ime">{{ utakmica.domacin }}</div>
+                    <canvas #pieDomaciIzgubljene></canvas>
+                  </div>
+                  <div class="pie-blok">
+                    <div class="pie-tim-ime">{{ utakmica.gost }}</div>
+                    <canvas #pieGostiIzgubljene></canvas>
+                  </div>
+                </div>
+              </div>
+
+
+            </div>
+          </div>
+        </div>
+        <div *ngIf="aktivanTab === 'shootingChart'">
+          <div class="sc-wrapper">
+            <div class="sc-glavni">
+              <!-- lista igrača -->
+              <div class="sc-igraci">
+                <div class="sc-podnaslov">Igrači</div>
+                <div class="igrac-red" [class.izabran]="izabraniIgrac === '' " (click)="izaberiIgraca('')">
+                  Tim
+                </div>
+                <div class="igrac-red" *ngFor="let ig of nasiStats" [class.izabran]="izabraniIgrac === ig.id"
+                  (click)="izaberiIgraca(ig.id)">
+                  #{{ ig.broj }} {{ ig.ime }} {{ ig.prezime }}
+                </div>
+              </div>
+
+              <!-- teren -->
+              <div class="sc-teren-box">
+               
+                <svg viewBox="0 0 560 560" class="sc-teren" #terenSvg>
+                  <!-- pozadina parketa -->
+                  <rect x="10" y="10" width="540" height="540" rx="8" fill="#3a3a3a" />
+
+                  <!-- linije terena -->
+                  <!-- tabla i koš (koš na 280,75) -->
+                  <line x1="255" y1="40" x2="305" y2="40" stroke="#d4af37" stroke-width="4" />
+                  <circle cx="280" cy="55" r="14" fill="none" stroke="#d4af37" stroke-width="2.5" />
+
+                  <!-- reket -->
+                  <rect x="220" y="10" width="120" height="150" fill="none" stroke="#d4af37" stroke-width="1.5" />
+                  <!-- krug slobodnih bacanja -->
+                  <circle cx="280" cy="160" r="60" fill="none" stroke="#d4af37" stroke-width="1.5" />
+
+                  <!-- luk za tri sa RAVNIM ćoškovima -->
+                  <path d="M 40 10 L 40 130 A 220 220 0 0 0 520 130 L 520 10" fill="none" stroke="#d4af37"
+                    stroke-width="2.5" />
+
+                  <!-- linije koje razdvajaju sektore (opciono, vizuelna pomoć) -->
+                  <!-- možeš dodati linije iz koša ka ivicama za 45° i centar granice -->
+
+                  <!-- PLOČICE sa procentom po zonama -->
+                  <g *ngFor="let z of zone">
+                    <rect [attr.x]="z.ploX - 23" [attr.y]="z.ploY - 22" width="46" height="20" rx="3"
+                      [attr.fill]="bojaPlocice(z.id)" stroke="#999" stroke-width="0.5" />
+                    <text [attr.x]="z.ploX" [attr.y]="z.ploY - 8" text-anchor="middle" font-size="11" font-weight="600"
+                      fill="#222">
+                      {{ zoneStat[z.id]?.pogodjeni ?? 0 }}/{{ zoneStat[z.id]?.ukupno ?? 0 }}
+                    </text>
+                    <rect [attr.x]="z.ploX - 23" [attr.y]="z.ploY" width="46" height="18" rx="3"
+                      [attr.fill]="bojaPlocice(z.id)" stroke="#999" stroke-width="0.5" />
+                    <text [attr.x]="z.ploX" [attr.y]="z.ploY + 13" text-anchor="middle" font-size="10" fill="#444">
+                      {{ (zoneStat[z.id]?.procenat ?? 0).toFixed(0) }}%
+                    </text>
+                  </g>
+
+                  <!-- tačke šuteva (klik briše) -->
+                  <circle *ngFor="let s of sutevi" [attr.cx]="s.x / 100 * 560" [attr.cy]="s.y / 100 * 560" r="6"
+                    [attr.fill]="s.pogodak ? '#2ecc71' : '#e74c3c'" stroke="#000" stroke-width="0.5" class="sut-tacka">
+                  </circle>
+                </svg>
+
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+
+
+
+  </body>
+  <footer>
+    <div align="left">
+      <img src="bbballstats_logo.png" alt="logo" class="logo-img" />
+    </div>
+    <div align="center">
+      &copy; BBallStats, 2026
+    </div>
+    <div class="footer-contact" align="right">
+      <a href="tel:+381628421563" class="linkButton"> <img src="logoPhone_white.png" alt="logoPhone_white"
+          class="email-icon"> +381628421563 </a> <br>
+      <a href="mailto: bballstatsinfo@gmail.com" class="linkButton"> <img src="logoMail_white.png" alt="logoMail_white"
+          class="email-icon"> bballstatsinfo@gmail.com</a>
+    </div>
+  </footer>
+</div>

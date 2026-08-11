@@ -1,0 +1,35 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.StatistikaIgraca = void 0;
+class StatistikaIgraca {
+    id = "";
+    utakmicaId = 0;
+    klub = "";
+    ime = "";
+    prezime = "";
+    broj = 0;
+    minuti = 0;
+    poeni = 0;
+    dvaPoenaPogodak = 0;
+    dvaPoenaPromasaj = 0;
+    dvaPoenaProcenat = 0;
+    triPoenaPogodak = 0;
+    triPoenaPromasaj = 0;
+    triPoenaProcenat = 0;
+    slobodnoPogodak = 0;
+    slobodnoPromasaj = 0;
+    slobodnoProcenat = 0;
+    skokoviNapad = 0;
+    skokoviOdbrana = 0;
+    skokoviUkupno = 0;
+    asistencije = 0;
+    ukradene = 0;
+    izgubljene = 0;
+    blokade = 0;
+    blokadePrimljene = 0;
+    licneGreske = 0;
+    iznudjeniFaulovi = 0;
+    indeks = 0;
+    plusMinus = 0;
+}
+exports.StatistikaIgraca = StatistikaIgraca;

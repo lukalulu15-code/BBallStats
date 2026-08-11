@@ -1,0 +1,142 @@
+<body>
+    <!-- Navigacioni meni -->
+    <header>
+        <img src="bbballstats_logo.png" alt="logo" class="logo-img" />
+        <div align="right">
+            <a (click)="trenerPocetna()" class="linkButton">Početna</a>
+            <a (click)="logOut()" class="linkButton">Odjavi se</a>
+        </div>
+    </header>
+
+    <div class="app-wrapper">
+
+        <main class="app-content">
+            <div class="profil-wrapper" *ngIf="trener">
+
+                <!-- zaglavlje -->
+                <div class="profil-header">
+                    <img [src]="trener.slika" class="profil-slika" *ngIf="trener.slika" />
+                    <div class="profil-info">
+                        <div class="profil-ime">{{ trener.ime }} {{ trener.prezime }}</div>
+                        <div class="profil-pozicija">{{ trener.klub }}</div>
+                        <div class="profil-meta">
+                            <span>{{ trener.mejl }}</span>
+                            <span>{{ trener.telefon }}</span>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="azuriraj-container">
+                    <div class="azuriraj-box">
+
+                        <div class="azuriraj-header">
+                            <img src="bbballstats_logo.png" alt="logo">
+                            <h2>Ažuriraj podatke</h2>
+                        </div>
+
+                        <!-- LIČNI PODACI -->
+                        <div class="sekcija">
+                            <div class="sekcija-naslov">Lični podaci</div>
+
+                            <div class="input-group">
+                                <input type="text" id="korisnickoIme" name="korisnickoIme" placeholder=" "
+                                    [(ngModel)]="korisnickoImeT">
+                                <label for="korisnickoIme">Korisničko ime</label>
+                                <div class="input-line"></div>
+                            </div>
+
+                            <div class="input-group">
+                                <input type="text" id="mejl" name="mejl" placeholder=" " [(ngModel)]="mejlT">
+                                <label for="mejl">Mejl</label>
+                                <div class="input-line"></div>
+                            </div>
+
+                            <div class="input-group">
+                                <input type="text" id="ime" name="ime" placeholder=" " [(ngModel)]="imeT">
+                                <label for="ime">Ime</label>
+                                <div class="input-line"></div>
+                            </div>
+
+                            <div class="input-group">
+                                <input type="text" id="prezime" name="prezime" placeholder=" " [(ngModel)]="prezimeT">
+                                <label for="prezime">Prezime</label>
+                                <div class="input-line"></div>
+                            </div>
+                            <div class="input-group">
+                                <input type="text" id="telefon" name="telefon" placeholder=" " [(ngModel)]="telefonT">
+                                <label for="prezime">Broj telefona</label>
+                                <div class="input-line"></div>
+                            </div>
+                            <div class="input-group file-group">
+                                <input type="file" id="slika" class="file-input" (change)="slikaTrener($event)">
+                                <label for="slika" class="file-label" [class.dragover]="isDragging"
+                                    (dragover)="naDragOver($event)" (dragleave)="naDragLeave()" (drop)="naDrop($event)">
+                                    <span class="label-text">Promeni profilnu sliku</span>
+                                </label>
+                                <div class="input-line"></div>
+                            </div>
+
+                            <div align="center" class="message">{{message}}</div>
+
+                            <div align="center">
+                                <button (click)="azurirajPodatke()">Sačuvaj podatke</button>
+                            </div>
+                        </div>
+
+                        <!-- PROMENA LOZINKE -->
+                        <div class="sekcija">
+                            <div class="sekcija-naslov">Promena lozinke</div>
+
+                            <div class="input-group">
+                                <input type="password" id="staraLozinka" name="staraLozinka" placeholder=" "
+                                    [(ngModel)]="staraLozinkaT">
+                                <label for="staraLozinka">Stara lozinka</label>
+                                <div class="input-line"></div>
+                            </div>
+
+                            <div class="input-group">
+                                <input type="password" id="novaLozinka" name="novaLozinka" placeholder=" "
+                                    [(ngModel)]="novaLozinkaT">
+                                <label for="novaLozinka">Nova lozinka</label>
+                                <div class="input-line"></div>
+                            </div>
+
+                            <div class="input-group">
+                                <input type="password" id="potvrdaLozinke" name="potvrdaLozinke" placeholder=" "
+                                    [(ngModel)]="potvrdaLozinkeT">
+                                <label for="potvrdaLozinke">Potvrdi lozinku</label>
+                                <div class="input-line"></div>
+                            </div>
+
+                            <div align="center">
+                                <button (click)="promeniLozinku()">Promeni lozinku</button>
+                            </div>
+                        </div>
+
+                        <div align="center" class="message">{{ messageL }}</div>
+
+                    </div>
+                </div>
+
+                <br><br>
+            </div>
+        </main>
+
+    </div>
+
+</body>
+<footer>
+    <div align="left">
+        <img src="bbballstats_logo.png" alt="logo" class="logo-img" />
+    </div>
+    <div align="center">
+        &copy; BBallStats, 2026
+    </div>
+    <div class="footer-contact" align="right">
+        <a href="tel:+381628421563" class="linkButton"> <img src="logoPhone_white.png" alt="logoPhone_white"
+                class="email-icon"> +381628421563 </a> <br>
+        <a href="mailto: bballstatsinfo@gmail.com" class="linkButton"> <img src="logoMail_white.png"
+                alt="logoMail_white" class="email-icon"> bballstatsinfo@gmail.com</a>
+    </div>
+</footer>

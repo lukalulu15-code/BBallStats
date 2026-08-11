@@ -1,0 +1,187 @@
+.sc-wrapper {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+}
+.sc-naslov {
+  font-size: 22px;
+  font-weight: 600;
+  color: #d4af37;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.sc-kontrole {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  justify-content: left;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.mod-opcije {
+  display: flex;
+  gap: 8px;
+}
+.mod-opcija {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  cursor: pointer;
+  color: #e8e8e8;
+}
+.mod-opcija.aktivan {
+  background: rgba(212, 175, 55, 0.15);
+  border-color: rgba(212, 175, 55, 0.5);
+  color: #d4af37;
+}
+.mod-opcija input {
+  accent-color: #d4af37;
+}
+
+.sc-select {
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 8px;
+  color: #e8e8e8;
+}
+
+.sc-glavni {
+  display: flex;
+  gap: 20px;
+}
+
+.sc-igraci {
+  flex: 0 0 200px;
+}
+.sc-podnaslov {
+  color: #d4af37;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+.igrac-red {
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  margin-bottom: 6px;
+  cursor: pointer;
+  color: #e8e8e8;
+  transition: all 0.15s ease;
+}
+.igrac-red:hover {
+  background: rgba(212, 175, 55, 0.08);
+}
+.igrac-red.izabran {
+  background: rgba(212, 175, 55, 0.2);
+  border-color: rgba(212, 175, 55, 0.5);
+  color: #d4af37;
+  font-weight: 600;
+}
+
+.sc-teren-box {
+  flex: 1;
+}
+
+.unos-toggle {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+.toggle-btn {
+  box-shadow: none !important;
+  padding: 10px 24px;
+  background: rgba(46, 204, 113, 0.12);
+  border: 1px solid rgba(46, 204, 113, 0.3);
+  border-radius: 6px;
+  color: #2ecc71;
+  font-weight: 600;
+  cursor: pointer;
+}
+.toggle-btn.aktivan {
+  background: #2ecc71;
+  color: #fff;
+}
+.toggle-btn.miss {
+  background: rgba(231, 76, 60, 0.12);
+  border-color: rgba(231, 76, 60, 0.3);
+  color: #e74c3c;
+}
+.toggle-btn.miss.aktivan {
+  background: #e74c3c;
+  color: #fff;
+}
+
+.sc-teren {
+  width: 100%;
+  height: auto;
+  cursor: crosshair;
+  display: block;
+}
+.sut-tacka {
+  cursor: pointer;
+}
+.sut-tacka:hover {
+  r: 9;
+  stroke: #d4af37;
+  stroke-width: 2;
+}
+
+.hint,
+.message {
+  text-align: center;
+  margin-top: 10px;
+  color: #95a5a6;
+  font-size: 13px;
+}
+.message {
+  color: #e74c3c;
+}
+.btn-zapocni {
+  box-shadow: none !important;
+  padding: 10px 24px;
+  background: rgba(46, 204, 113, 0.15);
+  border: 1px solid rgba(46, 204, 113, 0.5);
+  border-radius: 8px;
+  color: #2ecc71;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-zapocni:hover {
+  background: #2ecc71;
+  color: #fff;
+}
+
+.btn-zavrsi {
+  box-shadow: none !important;
+  padding: 10px 24px;
+  background: rgba(231, 76, 60, 0.12);
+  border-color: rgba(231, 76, 60, 0.3);
+  color: #e74c3c;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-zavrsi:hover {
+  background: #e74c3c;
+  color: #fff;
+}
+
+.trening-aktivan {
+  padding: 8px 16px;
+  background: rgba(46, 204, 113, 0.15);
+  border-radius: 8px;
+  color: #2ecc71;
+  font-weight: 600;
+}

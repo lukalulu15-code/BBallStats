@@ -1,0 +1,71 @@
+<body>
+    <!-- Navigacioni meni -->
+    <header>
+        <img src="bbballstats_logo.png" alt="logo" class="logo-img" />
+        <div align="right">
+            <a href="" class="linkButton">Početna</a>
+            <a href="#" class="linkButton">O nama</a>
+            <a href="#" class="linkButton">Ponuda</a>
+        </div>
+    </header>
+
+    <div class="app-wrapper">
+
+        <main class="app-content">
+            <div class="login-container">
+                <div class="login-box">
+                    <!-- Logotip ili Naziv aplikacije -->
+                    <div class="login-header" align="center">
+                        <span><img src="bbballstats_logo.png" alt="logo" class="logo-img-login"></span>
+                    </div>
+
+                    <!-- Forma -->
+                    <div class="login-form">
+                        <div class="input-group">
+                            <input type="password" placeholder=" " [(ngModel)]="novaLozinka" />
+                            <label>Nova lozinka</label>
+                            <div class="input-line"></div>
+                        </div>
+
+                        <div class="input-group">
+                            <input type="password" placeholder=" " [(ngModel)]="potvrdaLozinke" />
+                            <label>Potvrdi lozinku</label>
+                            <div class="input-line"></div>
+                        </div>
+                        <div class="radio-grupa">
+                            <span class="radio-naslov">Tip korisnika:</span>
+                            <div class="radio-opcije">
+                                <label class="radio-opcija">
+                                    <input type="radio" name="tipKorisnika" value="igrac" [(ngModel)]="tipKorisnika">
+                                    <span>Igrač</span>
+                                </label>
+                                <label class="radio-opcija">
+                                    <input type="radio" name="tipKorisnika" value="trener" [(ngModel)]="tipKorisnika">
+                                    <span>Trener</span>
+                                </label>
+                            </div>
+                        </div>
+                        <button (click)="resetujLozinku()">Potvrdi</button>
+                        <div class="message">{{ poruka }}</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+    </div>
+
+</body>
+<footer>
+    <div align="left">
+        <img src="bbballstats_logo.png" alt="logo" class="logo-img" />
+    </div>
+    <div align="center">
+        &copy; BBallStats, 2026
+    </div>
+    <div class="footer-contact" align="right">
+        <a href="tel:+381628421563" class="linkButton"> <img src="logoPhone_white.png" alt="logoPhone_white"
+                class="email-icon"> +381628421563 </a> <br>
+        <a href="mailto: bballstatsinfo@gmail.com" class="linkButton"> <img src="logoMail_white.png"
+                alt="logoMail_white" class="email-icon"> bballstatsinfo@gmail.com</a>
+    </div>
+</footer>

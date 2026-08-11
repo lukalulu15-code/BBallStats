@@ -1,0 +1,33 @@
+export class StatistikaIgraca{
+    id: string ="";
+    utakmicaId:number=0;
+    klub:string="";
+    ime:string="";
+    prezime:string="";
+    broj:number=0;
+    minuti:string="";
+    poeni:number=0;
+    dvaPoenaPogodak:number=0;
+    dvaPoenaPromasaj:number=0;
+    dvaPoenaProcenat:number=0;
+    triPoenaPogodak:number=0;
+    triPoenaPromasaj:number=0;
+    triPoenaProcenat:number=0;
+    slobodnoPogodak:number=0;
+    slobodnoPromasaj:number=0;
+    slobodnoProcenat:number=0;
+    skokoviNapad:number=0;
+    skokoviOdbrana:number=0;
+    skokoviUkupno:number=0;
+    asistencije:number=0;
+    ukradene:number=0;
+    izgubljene:number=0;
+    blokade:number=0;
+    blokadePrimljene:number=0;
+    licneGreske:number=0;
+    iznudjeniFaulovi:number=0;
+    indeks:number=0;
+    plusMinus:number=0;
+    teren:boolean=false;
+    starter:boolean=false;
+}
